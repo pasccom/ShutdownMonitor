@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/disabled-monitor.png</file>
+        <file>icons/enabled-monitor.png</file>
+    </qresource>
+</RCC>

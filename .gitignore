@@ -1,0 +1,17 @@
+# Target:
+shutdownmonitor
+
+# Output directories:
+.moc
+.obj_unix
+/debug
+/release
+
+# QMake generated files:
+qrc_*.cpp
+/.qmake.cache
+/.qmake.stash
+Makefile*
+
+# qtcreator generated files
+*.pro.user*
