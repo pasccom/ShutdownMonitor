@@ -92,7 +92,7 @@ bool QRRScreenResources::enableOutput(QRROutput* out)
     out->mEnabled = true;
     XGrabServer(mDisplay);
     for (auto it = mCrtcs.constBegin(); it != mCrtcs.constEnd(); it++)
-        ans &= actualizeCrtcOrigin(it.key(), it.value()->rect().topLeft() - newScreen.topLeft() + totalScreen.topLeft());
+        ans &= updateCrtcOrigin(it.key(), it.value()->rect().topLeft() - newScreen.topLeft() + totalScreen.topLeft());
     XUngrabServer(mDisplay);
     return ans;
 }
@@ -123,12 +123,12 @@ bool QRRScreenResources::disableOutput(QRROutput* out)
     out->mEnabled = false;
     XGrabServer(mDisplay);
     for (auto it = mCrtcs.constBegin(); it != mCrtcs.constEnd(); it++)
-        ans &= actualizeCrtcOrigin(it.key(), it.value()->rect().topLeft() - newScreen.topLeft() + totalScreen.topLeft());
+        ans &= updateCrtcOrigin(it.key(), it.value()->rect().topLeft() - newScreen.topLeft() + totalScreen.topLeft());
     XUngrabServer(mDisplay);
     return ans;
 }
 
-bool QRRScreenResources::actualizeCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin)
+bool QRRScreenResources::updateCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin)
 {
     // Get the CRTC internal representation:
     QRRCrtc* crtc = mCrtcs.value(crtcId);

@@ -118,7 +118,7 @@ private:
      * \param newOrigin The new coordinates of the CRTC top left point.
      * \return Whether the CRTC origin was successfully updated.
      */
-    bool actualizeCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin);
+    bool updateCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin);
 
     Display* mDisplay;                  /*!< The associated X display */
     XRRScreenResources* mResources;    /*!< The associated screen resources */
