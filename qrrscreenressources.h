@@ -13,29 +13,117 @@ typedef struct _XRRScreenResources XRRScreenResources;
 class QRROutput;
 class QRRCrtc;
 
+/*!
+ * \brief Internal reprsentation for XrandR screen ressources
+ *
+ * This class holds the internal representation for XRandR screen ressources.
+ * It also allows to enable and disable the outputs.
+ */
 class QRRScreenRessources
 {
 public:
+    /*!
+     * \brief Retrieve XRandR screen resources
+     *
+     * Uses XrandR 1.2 API to retrieve screen resources for the given display.
+     * \param display The X display for which to retrieve screen resources.
+     * \return The screen ressources to the given display.
+     * \sa getCurrent()
+     */
     static QRRScreenRessources* get(Display *display);
+    /*!
+     * \brief Retrieve XRandR screen resources
+     *
+     * Uses XrandR 1.3 API to retrieve screen resources for the given display.
+     * \param display The X display for which to retrieve screen resources.
+     * \return The screen ressources to the given display.
+     * \sa get()
+     */
     static QRRScreenRessources* getCurrent(Display *display);
+
+    /*!
+     * \brief Destructor
+     *
+     * Desallocates the internal data and releases the ressources.
+     */
     ~QRRScreenRessources(void);
 
-    QRROutput* output(RROutput outputId);
+    /*!
+     * \brief Get all outputs
+     *
+     * Get a QList of pointers to the output internal representations.
+     * \param refresh Whether the cached output list should be refreshed.
+     * \return
+     */
     QList<QRROutput*> outputs(bool refresh = false);
+    /*!
+     * \brief Get an output
+     *
+     * Get a pointer to the corresponding output internal representation.
+     * \param outputId The desired output identifier.
+     * \return The output internal representation corresponding to the given identifier.
+     */
+    QRROutput* output(RROutput outputId);
+    /*!
+     * \brief Get a CRTC
+     *
+     * Get a pointer to the corresponding CRTC (Cathode Ray Tube Controller) internal reprsentation.
+     * \param crtcId The desired CRTC identifier.
+     * \return The CRTC internal representation corresponding to the given identifier.
+     */
     QRRCrtc* crtc(RRCrtc crtcId);
 
+    /*!
+     * \brief Enable the given output
+     *
+     * Enable the given output.
+     * \param out The output to enable.
+     * \return Whether this output was successfully enabled.
+     * \sa disableOutput()
+     */
     bool enableOutput(QRROutput* out);
+    /*!
+     * \brief Disable the given output
+     *
+     * Disable the given output.
+     * \param out The output to disable.
+     * \return Whether this output was successfully disabled.
+     * \sa enableOutput()
+     */
     bool disableOutput(QRROutput* out);
 private:
+    /*!
+     * \brief Constructor
+     *
+     * Initialize the class with the given information.
+     * \param display The X display.
+     * \param resources The screen ressources from XRandR.
+     * \sa get(), getCurrent()
+     */
     QRRScreenRessources(Display* display, XRRScreenResources* ressources);
 
+    /*!
+     * \brief Refresh the cached output list
+     *
+     * Refresh the QList of output internal representations.
+     */
     void refreshOutputs(void);
+    /*!
+     * \brief Update a CRTC origin
+     *
+     * Update the top left point of a CRTC (Cathode Ray Tube Controller) rectangle.
+     * Also update the associated outputs. The CRTC is disabled
+     * if there is not any associated enabled output.
+     * \param crtcId The identifier of the CRTC to update.
+     * \param newOrigin The new coordinates of the CRTC top left point.
+     * \return Whether the CRTC origin was successfully updated.
+     */
     bool actualizeCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin);
 
-    Display* mDisplay;
-    XRRScreenResources* mRessources;
-    QList<QRROutput*> mOutputs;
-    QMap<RRCrtc, QRRCrtc*> mCrtcs;
+    Display* mDisplay;                  /*!< The associated X display */
+    XRRScreenResources* mRessources;    /*!< The associated screen resources */
+    QList<QRROutput*> mOutputs;         /*!< The list of output internal representations */
+    QMap<RRCrtc, QRRCrtc*> mCrtcs;      /*!< The map of CRTC internal representations */
 };
 
 #endif // QRRSCREENRESSOURCES_H

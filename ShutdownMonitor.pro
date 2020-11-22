@@ -29,7 +29,9 @@ SOURCES +=  main.cpp \
 RESOURCES += shutdownmonitor.qrc
 
 # Other files:
-OTHER_FILES += .gitignore
+OTHER_FILES +=  .gitignore          \
+                Doxyfile            \
+                Doxyfile.internal
 
 # The directory where to put MOC-generated files :
 MOC_DIR = ./.moc

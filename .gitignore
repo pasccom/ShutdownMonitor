@@ -6,6 +6,7 @@ shutdownmonitor
 .obj_unix
 /debug
 /release
+/doc
 
 # QMake generated files:
 qrc_*.cpp

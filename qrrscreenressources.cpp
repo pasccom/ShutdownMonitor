@@ -59,12 +59,6 @@ void QRRScreenRessources::refreshOutputs(void)
 
 QRRCrtc* QRRScreenRessources::crtc(RRCrtc crtcId)
 {
-    /*for (int c = 0; c < mRessources->ncrtc; c++) {
-        XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(mDisplay, mRessources, mRessources->crtcs[c]);
-        qDebug() << c << mRessources->crtcs[c] << crtcInfo->x << crtcInfo->y << crtcInfo->width << crtcInfo->height;
-        XRRFreeCrtcInfo(crtcInfo);
-    }*/
-
     if (crtcId == None)
         return nullptr;
     if (!mCrtcs.contains(crtcId))
@@ -74,11 +68,15 @@ QRRCrtc* QRRScreenRessources::crtc(RRCrtc crtcId)
 
 bool QRRScreenRessources::enableOutput(QRROutput* out)
 {
+    // The output is already enabled:
     if (out->mEnabled)
         return true;
+    // The output CRTC should be in the CRTC map:
     if (!mCrtcs.contains(out->mInfo->crtc))
         return false;
 
+    // Compute the total screen and the new screen:
+    // TODO factor this code
     QRect totalScreen;
     QRect newScreen;
     foreach (QRROutput* o, mOutputs) {
@@ -89,6 +87,7 @@ bool QRRScreenRessources::enableOutput(QRROutput* out)
             newScreen |= mCrtcs.value(o->mInfo->crtc)->rect();
     }
 
+    // Update the CRTCs:
     bool ans = true;
     out->mEnabled = true;
     XGrabServer(mDisplay);
@@ -100,11 +99,15 @@ bool QRRScreenRessources::enableOutput(QRROutput* out)
 
 bool QRRScreenRessources::disableOutput(QRROutput* out)
 {
+    // The output is already disabled:
     if (!out->mEnabled)
         return true;
+    // The output CRTC should be in the CRTC map:
     if (!mCrtcs.contains(out->mInfo->crtc))
         return false;
 
+    // Compute the total screen and the new screen:
+    // TODO factor this code
     QRect totalScreen;
     QRect newScreen;
     foreach (QRROutput* o, mOutputs) {
@@ -115,6 +118,7 @@ bool QRRScreenRessources::disableOutput(QRROutput* out)
             newScreen |= mCrtcs.value(o->mInfo->crtc)->rect();
     }
 
+    // Update the CRTCs:
     bool ans = true;
     out->mEnabled = false;
     XGrabServer(mDisplay);
@@ -126,9 +130,11 @@ bool QRRScreenRessources::disableOutput(QRROutput* out)
 
 bool QRRScreenRessources::actualizeCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin)
 {
+    // Get the CRTC internal representation:
     QRRCrtc* crtc = mCrtcs.value(crtcId);
-    QList<RROutput> crtcOutputs = crtc->outputs();
 
+    // Get the associated enabled outputs:
+    QList<RROutput> crtcOutputs = crtc->outputs();
     for (auto it = crtcOutputs.begin(); it != crtcOutputs.end();) {
         QRROutput* o = output(*it);
         if ((o == nullptr) || !o->mEnabled)
@@ -137,6 +143,7 @@ bool QRRScreenRessources::actualizeCrtcOrigin(RRCrtc crtcId, const QPoint& newOr
             it++;
     }
 
+    // Update the CRTC origin or disable it if there is not any associated enabled output:
     Status s;
     QVector<RROutput> outputs = QVector<RROutput>::fromList(crtcOutputs);
     if (outputs.isEmpty())
@@ -147,8 +154,5 @@ bool QRRScreenRessources::actualizeCrtcOrigin(RRCrtc crtcId, const QPoint& newOr
                              newOrigin.x(), newOrigin.y(), crtc->mode, crtc->rotation,
                              outputs.data(), outputs.size());
 
-    if (s != RRSetConfigSuccess)
-        return false;
-
-    return true;
+    return (s == RRSetConfigSuccess);
 }
