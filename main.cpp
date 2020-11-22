@@ -56,20 +56,24 @@ int main(int argc, char *argv[])
     parser.process(app);
 
     // Check theme:
-    if (!QStringList({"light", "dark"}).contains(parser.value("theme"))) {
+    QStringList availableThemes;
+    availableThemes << "light";
+    availableThemes << "dark";
+    if (!availableThemes.contains(parser.value("theme"))) {
         qWarning() << "Unsupported theme:" << parser.value("theme");
         parser.showHelp(-3);
-        //return -3;
     }
 
     // Load screen resources:
     QRRScreenResources* resources = QRRScreenResources::getCurrent(QX11Info::display());
 
     // Create the system tray menu:
+    int o = 0;
     QMenu menu;
     QIcon  enabledMonitorIcon(QString(":/icons/%1/enabled-monitor.png").arg(parser.value("theme")));
     QIcon disabledMonitorIcon(QString(":/icons/%1/disabled-monitor.png").arg(parser.value("theme")));
     foreach (QRROutput* output, resources->outputs()) {
+        o++;
         if (output->connection != RR_Connected)
             continue;
         qDebug() << output->display();
@@ -77,13 +81,33 @@ int main(int argc, char *argv[])
         // Create an action for this connected output:
         QAction *action = menu.addAction(output->display());
         action->setIcon(output->enabled() ? enabledMonitorIcon : disabledMonitorIcon);
-        QObject::connect(action, &QAction::triggered, [action, output, &enabledMonitorIcon, &disabledMonitorIcon] {
+        action->setData(o);
+        QObject::connect(action, &QAction::triggered, [resources, action, &enabledMonitorIcon, &disabledMonitorIcon] {
+            QRROutput* output = resources->outputs().at(action->data().toUInt() - 1); // Indexing by action->data is 1-based
             if (output->enabled())
                 output->disable();
             else
                 output->enable();
 
             action->setIcon(output->enabled() ? enabledMonitorIcon : disabledMonitorIcon);
+        });
+    }
+    menu.addSeparator();
+
+    // Create the theme sub-menu:
+    QMenu *themeMenu = menu.addMenu(QIcon::fromTheme("palette-symbolic"), "Theme");
+    foreach (QString theme, availableThemes) {
+        QAction* action = themeMenu->addAction(theme);
+        QObject::connect(action, &QAction::triggered, [resources, &menu, &theme, &enabledMonitorIcon, &disabledMonitorIcon] {
+            enabledMonitorIcon  = QIcon(QString(":/icons/%1/enabled-monitor.png").arg(theme));
+            disabledMonitorIcon = QIcon(QString(":/icons/%1/disabled-monitor.png").arg(theme));
+
+            foreach (QAction* action, menu.actions()) {
+                if (action->data().isNull())
+                    continue;
+                QRROutput* output = resources->outputs().at(action->data().toUInt() - 1); // Indexing by action->data is 1-based
+                action->setIcon(output->enabled() ? enabledMonitorIcon : disabledMonitorIcon);
+            }
         });
     }
 
