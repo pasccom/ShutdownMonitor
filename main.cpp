@@ -1,4 +1,4 @@
-#include "qrrscreenressources.h"
+#include "qrrscreenresources.h"
 #include "qrroutput.h"
 #include "qrrcrtc.h"
 
@@ -42,12 +42,12 @@ int main(int argc, char *argv[])
         return -2;
     }
 
-    // Load screen ressources:
-    QRRScreenRessources* ressources = QRRScreenRessources::getCurrent(QX11Info::display());
+    // Load screen resources:
+    QRRScreenResources* resources = QRRScreenResources::getCurrent(QX11Info::display());
 
     // Create the system tray menu:
     QMenu menu;
-    foreach (QRROutput* output, ressources->outputs()) {
+    foreach (QRROutput* output, resources->outputs()) {
         if (output->connection != RR_Connected)
             continue;
         qDebug() << output->display();
@@ -73,10 +73,10 @@ int main(int argc, char *argv[])
     icon.setContextMenu(&menu);
     icon.show();
 
-    // Ensure that the screen ressources are deallocated before quitting the application:
-    QObject::connect(&app, &QApplication::aboutToQuit, [ressources] {
-        qDebug() << "Delete screen ressources";
-        delete ressources;
+    // Ensure that the screen resources are deallocated before quitting the application:
+    QObject::connect(&app, &QApplication::aboutToQuit, [resources] {
+        qDebug() << "Delete screen resources";
+        delete resources;
     });
 
     // Start application event loop:

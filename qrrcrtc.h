@@ -10,7 +10,7 @@ typedef XID RRMode;
 typedef XID RROutput;
 typedef struct _XRRCrtcInfo XRRCrtcInfo;
 
-class QRRScreenRessources;
+class QRRScreenResources;
 
 /*!
  * \brief Internal representation for XrandR CRTC
@@ -67,12 +67,12 @@ private:
      * \param parent The parent screen resources.
      * \param info The CRTC information from XrandR.
      */
-    QRRCrtc(QRRScreenRessources* parent, XRRCrtcInfo* info);
+    QRRCrtc(QRRScreenResources* parent, XRRCrtcInfo* info);
 
-    QRRScreenRessources* mParent;   /*!< The parent screen resources */
+    QRRScreenResources* mParent;   /*!< The parent screen resources */
     XRRCrtcInfo* mInfo;             /*!< The CRTC information */
 
-    friend class QRRScreenRessources;
+    friend class QRRScreenResources;
 };
 
 #endif // QRRCRTC_H

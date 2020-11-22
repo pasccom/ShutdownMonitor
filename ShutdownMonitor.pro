@@ -19,13 +19,13 @@ LIBS += -lXrandr -lX11
 # The headers and source files:
 HEADERS +=  qrrcrtc.h \
             qrroutput.h \
-            qrrscreenressources.h
+            qrrscreenresources.h
 SOURCES +=  main.cpp \
             qrrcrtc.cpp \
             qrroutput.cpp \
-            qrrscreenressources.cpp
+            qrrscreenresources.cpp
 
-# The ressources:
+# The resources:
 RESOURCES += shutdownmonitor.qrc
 
 # Other files:

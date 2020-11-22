@@ -1,11 +1,11 @@
 #include "qrroutput.h"
-#include "qrrscreenressources.h"
+#include "qrrscreenresources.h"
 
 #include <QtDebug>
 
 #include <X11/extensions/Xrandr.h>
 
-QRROutput::QRROutput(QRRScreenRessources *parent, RROutput id, XRROutputInfo *info)
+QRROutput::QRROutput(QRRScreenResources *parent, RROutput id, XRROutputInfo *info)
     : mParent(parent), mId(id), mInfo(info)
 {
     physicalWidth = mInfo != nullptr ? mInfo->mm_width : 0;

@@ -4,7 +4,7 @@
 
 #include "X11/extensions/Xrandr.h"
 
-QRRCrtc::QRRCrtc(QRRScreenRessources *parent, XRRCrtcInfo *info)
+QRRCrtc::QRRCrtc(QRRScreenResources *parent, XRRCrtcInfo *info)
     : mParent(parent), mInfo(info)
 {
     x = mInfo != nullptr ? mInfo->x : 0;

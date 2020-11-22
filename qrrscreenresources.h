@@ -1,5 +1,5 @@
-#ifndef QRRSCREENRESSOURCES_H
-#define QRRSCREENRESSOURCES_H
+#ifndef QRRSCREENRESOURCES_H
+#define QRRSCREENRESOURCES_H
 
 #include <QList>
 #include <QMap>
@@ -14,12 +14,12 @@ class QRROutput;
 class QRRCrtc;
 
 /*!
- * \brief Internal reprsentation for XrandR screen ressources
+ * \brief Internal reprsentation for XrandR screen resources
  *
- * This class holds the internal representation for XRandR screen ressources.
+ * This class holds the internal representation for XRandR screen resources.
  * It also allows to enable and disable the outputs.
  */
-class QRRScreenRessources
+class QRRScreenResources
 {
 public:
     /*!
@@ -27,26 +27,26 @@ public:
      *
      * Uses XrandR 1.2 API to retrieve screen resources for the given display.
      * \param display The X display for which to retrieve screen resources.
-     * \return The screen ressources to the given display.
+     * \return The screen resources to the given display.
      * \sa getCurrent()
      */
-    static QRRScreenRessources* get(Display *display);
+    static QRRScreenResources* get(Display *display);
     /*!
      * \brief Retrieve XRandR screen resources
      *
      * Uses XrandR 1.3 API to retrieve screen resources for the given display.
      * \param display The X display for which to retrieve screen resources.
-     * \return The screen ressources to the given display.
+     * \return The screen resources to the given display.
      * \sa get()
      */
-    static QRRScreenRessources* getCurrent(Display *display);
+    static QRRScreenResources* getCurrent(Display *display);
 
     /*!
      * \brief Destructor
      *
-     * Desallocates the internal data and releases the ressources.
+     * Desallocates the internal data and releases the resources.
      */
-    ~QRRScreenRessources(void);
+    ~QRRScreenResources(void);
 
     /*!
      * \brief Get all outputs
@@ -97,10 +97,10 @@ private:
      *
      * Initialize the class with the given information.
      * \param display The X display.
-     * \param resources The screen ressources from XRandR.
+     * \param resources The screen resources from XRandR.
      * \sa get(), getCurrent()
      */
-    QRRScreenRessources(Display* display, XRRScreenResources* ressources);
+    QRRScreenResources(Display* display, XRRScreenResources* resources);
 
     /*!
      * \brief Refresh the cached output list
@@ -121,9 +121,9 @@ private:
     bool actualizeCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin);
 
     Display* mDisplay;                  /*!< The associated X display */
-    XRRScreenResources* mRessources;    /*!< The associated screen resources */
+    XRRScreenResources* mResources;    /*!< The associated screen resources */
     QList<QRROutput*> mOutputs;         /*!< The list of output internal representations */
     QMap<RRCrtc, QRRCrtc*> mCrtcs;      /*!< The map of CRTC internal representations */
 };
 
-#endif // QRRSCREENRESSOURCES_H
+#endif // QRRSCREENRESOURCES_H

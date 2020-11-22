@@ -8,7 +8,7 @@ typedef XID RROutput;
 typedef struct _XRROutputInfo XRROutputInfo;
 typedef unsigned short Connection;
 
-class QRRScreenRessources;
+class QRRScreenResources;
 class QRRCrtc;
 
 /*!
@@ -81,14 +81,14 @@ private:
      * \param id The output identifier.
      * \param info The output information from XrandR.
      */
-    QRROutput(QRRScreenRessources* parent, RROutput id, XRROutputInfo* info);
+    QRROutput(QRRScreenResources* parent, RROutput id, XRROutputInfo* info);
 
-    QRRScreenRessources* mParent;   /*!< The parent screen resources */
+    QRRScreenResources* mParent;   /*!< The parent screen resources */
     RROutput mId;                   /*!< The output identifier */
     XRROutputInfo* mInfo;           /*!< The output information */
     bool mEnabled;                  /*!< The enabled state for this output */
 
-    friend class QRRScreenRessources;
+    friend class QRRScreenResources;
 };
 
 #endif // QRROUTPUT_H

@@ -1,4 +1,4 @@
-#include "qrrscreenressources.h"
+#include "qrrscreenresources.h"
 #include "qrroutput.h"
 #include "qrrcrtc.h"
 
@@ -7,32 +7,32 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
 
-QRRScreenRessources::QRRScreenRessources(Display *display, XRRScreenResources *ressources)
-    : mDisplay(display), mRessources(ressources)
+QRRScreenResources::QRRScreenResources(Display *display, XRRScreenResources *resources)
+    : mDisplay(display), mResources(resources)
 {}
 
-QRRScreenRessources::~QRRScreenRessources(void)
+QRRScreenResources::~QRRScreenResources(void)
 {
     qDeleteAll(mOutputs);
     qDeleteAll(mCrtcs);
 
-    if (mRessources != nullptr)
-        XRRFreeScreenResources(mRessources);
+    if (mResources != nullptr)
+        XRRFreeScreenResources(mResources);
 }
 
-QRRScreenRessources* QRRScreenRessources::get(Display* display)
+QRRScreenResources* QRRScreenResources::get(Display* display)
 {
     Window root = DefaultRootWindow(display);
-    return new QRRScreenRessources(display, XRRGetScreenResources(display, root));
+    return new QRRScreenResources(display, XRRGetScreenResources(display, root));
 }
 
-QRRScreenRessources* QRRScreenRessources::getCurrent(Display* display)
+QRRScreenResources* QRRScreenResources::getCurrent(Display* display)
 {
     Window root = DefaultRootWindow(display);
-    return new QRRScreenRessources(display, XRRGetScreenResourcesCurrent(display, root));
+    return new QRRScreenResources(display, XRRGetScreenResourcesCurrent(display, root));
 }
 
-QRROutput* QRRScreenRessources::output(RROutput outputId)
+QRROutput* QRRScreenResources::output(RROutput outputId)
 {
     foreach (QRROutput* output, mOutputs)
         if (output->mId == outputId)
@@ -41,7 +41,7 @@ QRROutput* QRRScreenRessources::output(RROutput outputId)
     return nullptr;
 }
 
-QList<QRROutput*> QRRScreenRessources::outputs(bool refresh)
+QList<QRROutput*> QRRScreenResources::outputs(bool refresh)
 {
     if (mOutputs.isEmpty() || refresh)
         refreshOutputs();
@@ -49,24 +49,24 @@ QList<QRROutput*> QRRScreenRessources::outputs(bool refresh)
     return mOutputs;
 }
 
-void QRRScreenRessources::refreshOutputs(void)
+void QRRScreenResources::refreshOutputs(void)
 {
     qDeleteAll(mOutputs);
 
-    for (int o = 0; o < mRessources->noutput; o++)
-        mOutputs.append(new QRROutput(this, mRessources->outputs[o], XRRGetOutputInfo(mDisplay, mRessources, mRessources->outputs[o])));
+    for (int o = 0; o < mResources->noutput; o++)
+        mOutputs.append(new QRROutput(this, mResources->outputs[o], XRRGetOutputInfo(mDisplay, mResources, mResources->outputs[o])));
 }
 
-QRRCrtc* QRRScreenRessources::crtc(RRCrtc crtcId)
+QRRCrtc* QRRScreenResources::crtc(RRCrtc crtcId)
 {
     if (crtcId == None)
         return nullptr;
     if (!mCrtcs.contains(crtcId))
-        mCrtcs.insert(crtcId, new QRRCrtc(this, XRRGetCrtcInfo(mDisplay, mRessources, crtcId)));
+        mCrtcs.insert(crtcId, new QRRCrtc(this, XRRGetCrtcInfo(mDisplay, mResources, crtcId)));
     return mCrtcs.value(crtcId);
 }
 
-bool QRRScreenRessources::enableOutput(QRROutput* out)
+bool QRRScreenResources::enableOutput(QRROutput* out)
 {
     // The output is already enabled:
     if (out->mEnabled)
@@ -97,7 +97,7 @@ bool QRRScreenRessources::enableOutput(QRROutput* out)
     return ans;
 }
 
-bool QRRScreenRessources::disableOutput(QRROutput* out)
+bool QRRScreenResources::disableOutput(QRROutput* out)
 {
     // The output is already disabled:
     if (!out->mEnabled)
@@ -128,7 +128,7 @@ bool QRRScreenRessources::disableOutput(QRROutput* out)
     return ans;
 }
 
-bool QRRScreenRessources::actualizeCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin)
+bool QRRScreenResources::actualizeCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin)
 {
     // Get the CRTC internal representation:
     QRRCrtc* crtc = mCrtcs.value(crtcId);
@@ -147,10 +147,10 @@ bool QRRScreenRessources::actualizeCrtcOrigin(RRCrtc crtcId, const QPoint& newOr
     Status s;
     QVector<RROutput> outputs = QVector<RROutput>::fromList(crtcOutputs);
     if (outputs.isEmpty())
-        s = XRRSetCrtcConfig(mDisplay, mRessources, crtcId, CurrentTime,
+        s = XRRSetCrtcConfig(mDisplay, mResources, crtcId, CurrentTime,
                              0, 0, None, RR_Rotate_0, NULL, 0);
     else
-        s = XRRSetCrtcConfig(mDisplay, mRessources, crtcId, CurrentTime,
+        s = XRRSetCrtcConfig(mDisplay, mResources, crtcId, CurrentTime,
                              newOrigin.x(), newOrigin.y(), crtc->mode, crtc->rotation,
                              outputs.data(), outputs.size());
 
