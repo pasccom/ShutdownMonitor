@@ -31,19 +31,19 @@ int main(int argc, char *argv[])
 {
     // Setup application:
     QApplication app(argc, argv);
-    QApplication::setApplicationName("ShutdownMonitor");
+    QApplication::setApplicationName(QObject::tr("ShutdownMonitor"));
     QApplication::setApplicationVersion("0.0.1");
     QApplication::setOrganizationName("pascom");
 
     // Check that we are under X11:
     if (!QX11Info::isPlatformX11()) {
-        qWarning() << "This program only supports X11";
+        qWarning() << QObject::tr("This program only supports X11");
         return -1;
     }
 
     // Check that system tray is available:
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
-        qWarning() << "This program requires the system tray";
+        qWarning() << QObject::tr("This program requires the system tray");
         return -2;
     }
 
@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
     QCommandLineParser parser;
     parser.addVersionOption();
     parser.addHelpOption();
-    parser.setApplicationDescription("Enable and disable the monitors from a system tray icon");
-    parser.addOption(QCommandLineOption("theme", "The theme to use for the icons. It can be 'light' or 'dark'.", "theme", "light"));
+    parser.setApplicationDescription(QObject::tr("Enable and disable the monitors from a system tray icon"));
+    parser.addOption(QCommandLineOption("theme", QObject::tr("The theme to use for the icons. It can be 'light' or 'dark'."), "theme", "light"));
     parser.process(app);
 
     // Check theme:
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     availableThemes << "light";
     availableThemes << "dark";
     if (!availableThemes.contains(parser.value("theme"))) {
-        qWarning() << "Unsupported theme:" << parser.value("theme");
+        qWarning() << QObject::tr("Unsupported theme: %1").arg(parser.value("theme"));
         parser.showHelp(-3);
     }
 
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     menu.addSeparator();
 
     // Create the theme sub-menu:
-    QMenu *themeMenu = menu.addMenu(QIcon::fromTheme("palette-symbolic"), "Theme");
+    QMenu *themeMenu = menu.addMenu(QIcon::fromTheme("palette-symbolic"), QObject::tr("Theme"));
     foreach (QString theme, availableThemes) {
         QAction* action = themeMenu->addAction(theme);
         QObject::connect(action, &QAction::triggered, [resources, &menu, &theme, &enabledMonitorIcon, &disabledMonitorIcon] {
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
     }
 
     // Add the exit action:
-    menu.addAction(QIcon::fromTheme("window-close"), "Quit", &app, &QApplication::quit);
+    menu.addAction(QIcon::fromTheme("window-close"), QObject::tr("Quit"), &app, &QApplication::quit);
 
     // Show the system tray icon:
     QSystemTrayIcon icon(QIcon::fromTheme("monitor"), &app);
