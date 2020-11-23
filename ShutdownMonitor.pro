@@ -67,8 +67,8 @@ isEmpty(QMAKE_LRELEASE) {
 }
 
 lrelease.input = TRANSLATIONS
-lrelease.output = ./bin/${QMAKE_FILE_BASE}.qm
-lrelease.commands = $$QMAKE_LRELEASE ${QMAKE_FILE_IN} -qm ./bin/${QMAKE_FILE_BASE}.qm
+lrelease.output = ./${DESTDIR}/${QMAKE_FILE_BASE}.qm
+lrelease.commands = $$QMAKE_LRELEASE ${QMAKE_FILE_IN} -qm ./${DESTDIR}/${QMAKE_FILE_BASE}.qm
 lrelease.CONFIG += no_link
 
 QMAKE_EXTRA_COMPILERS += lrelease
