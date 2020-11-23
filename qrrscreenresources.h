@@ -109,6 +109,22 @@ private:
      */
     void refreshOutputs(void);
     /*!
+     * \brief Compute total screen
+     *
+     * Compute the screen rectangle when all outputs are on.
+     * \return The total screen rectangle
+     * \sa computeScreen()
+     */
+    QRect computeTotalScreen(void) const;
+    /*!
+     * \brief Compute screen
+     *
+     * Compute the screen rectangle when only enabled outputs are on.
+     * \return The screen rectangle
+     * \sa computeTotalScreen()
+     */
+    QRect computeScreen(void) const;
+    /*!
      * \brief Update a CRTC origin
      *
      * Update the top left point of a CRTC (Cathode Ray Tube Controller) rectangle.

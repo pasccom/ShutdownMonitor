@@ -75,21 +75,11 @@ bool QRRScreenResources::enableOutput(QRROutput* out)
     if (!mCrtcs.contains(out->mInfo->crtc))
         return false;
 
-    // Compute the total screen and the new screen:
-    // TODO factor this code
-    QRect totalScreen;
-    QRect newScreen;
-    foreach (QRROutput* o, mOutputs) {
-        if (!mCrtcs.contains(o->mInfo->crtc))
-            continue;
-        totalScreen |= mCrtcs.value(o->mInfo->crtc)->rect();
-        if ((o == out) || (o->mEnabled))
-            newScreen |= mCrtcs.value(o->mInfo->crtc)->rect();
-    }
-
     // Update the CRTCs:
     bool ans = true;
     out->mEnabled = true;
+    QRect totalScreen = computeTotalScreen();
+    QRect newScreen = computeScreen();
     XGrabServer(mDisplay);
     for (auto it = mCrtcs.constBegin(); it != mCrtcs.constEnd(); it++)
         ans &= updateCrtcOrigin(it.key(), it.value()->rect().topLeft() - newScreen.topLeft() + totalScreen.topLeft());
@@ -106,26 +96,39 @@ bool QRRScreenResources::disableOutput(QRROutput* out)
     if (!mCrtcs.contains(out->mInfo->crtc))
         return false;
 
-    // Compute the total screen and the new screen:
-    // TODO factor this code
-    QRect totalScreen;
-    QRect newScreen;
-    foreach (QRROutput* o, mOutputs) {
-        if (!mCrtcs.contains(o->mInfo->crtc))
-            continue;
-        totalScreen |= mCrtcs.value(o->mInfo->crtc)->rect();
-        if ((o != out) && (o->mEnabled))
-            newScreen |= mCrtcs.value(o->mInfo->crtc)->rect();
-    }
-
     // Update the CRTCs:
     bool ans = true;
     out->mEnabled = false;
+    QRect totalScreen = computeTotalScreen();
+    QRect newScreen = computeScreen();
     XGrabServer(mDisplay);
     for (auto it = mCrtcs.constBegin(); it != mCrtcs.constEnd(); it++)
         ans &= updateCrtcOrigin(it.key(), it.value()->rect().topLeft() - newScreen.topLeft() + totalScreen.topLeft());
     XUngrabServer(mDisplay);
     return ans;
+}
+
+QRect QRRScreenResources::computeTotalScreen(void) const
+{
+    QRect screen;
+    foreach (QRROutput* o, mOutputs) {
+        if (!mCrtcs.contains(o->mInfo->crtc))
+            continue;
+        screen |= mCrtcs.value(o->mInfo->crtc)->rect();
+    }
+    return screen;
+}
+
+QRect QRRScreenResources::computeScreen(void) const
+{
+    QRect screen;
+    foreach (QRROutput* o, mOutputs) {
+        if (!mCrtcs.contains(o->mInfo->crtc))
+            continue;
+        if (o->mEnabled)
+            screen |= mCrtcs.value(o->mInfo->crtc)->rect();
+    }
+    return screen;
 }
 
 bool QRRScreenResources::updateCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin)
