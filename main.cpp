@@ -5,6 +5,7 @@
 #include <QX11Info>
 #include <QMenu>
 #include <QSystemTrayIcon>
+#include <QTranslator>
 #include <QApplication>
 #include <QCommandLineParser>
 
@@ -31,9 +32,15 @@ int main(int argc, char *argv[])
 {
     // Setup application:
     QApplication app(argc, argv);
-    QApplication::setApplicationName(QObject::tr("ShutdownMonitor"));
+    QApplication::setApplicationName("ShutdownMonitor");
     QApplication::setApplicationVersion("0.0.1");
     QApplication::setOrganizationName("pascom");
+
+    // Load and install translator for the system locale:
+    QTranslator translator(&app);
+    translator.load(QLocale(), "shutdownmonitor", "_", app.applicationDirPath());
+    if (!app.installTranslator(&translator))
+        qWarning() << "Could not install translator";
 
     // Check that we are under X11:
     if (!QX11Info::isPlatformX11()) {
@@ -57,8 +64,8 @@ int main(int argc, char *argv[])
 
     // Check theme:
     QStringList availableThemes;
-    availableThemes << "light";
-    availableThemes << "dark";
+    availableThemes << QT_TRANSLATE_NOOP("QObject", "light");
+    availableThemes << QT_TRANSLATE_NOOP("QObject",  "dark");
     if (!availableThemes.contains(parser.value("theme"))) {
         qWarning() << QObject::tr("Unsupported theme: %1").arg(parser.value("theme"));
         parser.showHelp(-3);
@@ -97,7 +104,7 @@ int main(int argc, char *argv[])
     // Create the theme sub-menu:
     QMenu *themeMenu = menu.addMenu(QIcon::fromTheme("palette-symbolic"), QObject::tr("Theme"));
     foreach (QString theme, availableThemes) {
-        QAction* action = themeMenu->addAction(theme);
+        QAction* action = themeMenu->addAction(QObject::tr(theme.toLocal8Bit().data()));
         QObject::connect(action, &QAction::triggered, [resources, &menu, &theme, &enabledMonitorIcon, &disabledMonitorIcon] {
             enabledMonitorIcon  = QIcon(QString(":/icons/%1/enabled-monitor.png").arg(theme));
             disabledMonitorIcon = QIcon(QString(":/icons/%1/disabled-monitor.png").arg(theme));
