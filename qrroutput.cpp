@@ -6,21 +6,15 @@
 #include <X11/extensions/Xrandr.h>
 
 QRROutput::QRROutput(QRRScreenResources *parent, RROutput id, XRROutputInfo *info)
-    : mParent(parent), mId(id), mInfo(info)
+    : mParent(parent), mId(id)
 {
-    physicalWidth = mInfo != nullptr ? mInfo->mm_width : 0;
-    physicalHeight = mInfo != nullptr ? mInfo->mm_height : 0;
-    name = mInfo != nullptr ? QString::fromLocal8Bit(QByteArray(mInfo->name, mInfo->nameLen)) : QString();
-    connection = mInfo != nullptr ? mInfo->connection : RR_UnknownConnection;
-    mCrtcId = mInfo != nullptr ? mInfo->crtc : None;
+    physicalWidth = info != nullptr ? info->mm_width : 0;
+    physicalHeight = info != nullptr ? info->mm_height : 0;
+    name = info != nullptr ? QString::fromLocal8Bit(QByteArray(info->name, info->nameLen)) : QString();
+    connection = info != nullptr ? info->connection : RR_UnknownConnection;
+    mCrtcId = info != nullptr ? info->crtc : None;
 
-    mEnabled = mInfo != nullptr ? mParent->crtc(mInfo->crtc) != nullptr : false;
-}
-
-QRROutput::~QRROutput(void)
-{
-    if (mInfo != nullptr)
-        XRRFreeOutputInfo(mInfo);
+    mEnabled = info != nullptr ? mParent->crtc(info->crtc) != nullptr : false;
 }
 
 QRRCrtc* QRROutput::crtc(void) const

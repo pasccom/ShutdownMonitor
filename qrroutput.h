@@ -20,13 +20,6 @@ class QRRCrtc;
 class QRROutput
 {
 public:
-    /*!
-     * \brief Destructor
-     *
-     * Releases the internal output information.
-     */
-    ~QRROutput(void);
-
     QString name;               /*!< The output name */
     int physicalWidth;          /*!< The physical width of this output (in mm) */
     int physicalHeight;         /*!< The physical height of this output (in mm) */
@@ -87,7 +80,6 @@ private:
     QRRScreenResources* mParent;    /*!< The parent screen resources */
     RROutput mId;                   /*!< The output identifier */
     RRCrtc mCrtcId;                 /*!< The id of the associated CRTC */
-    XRROutputInfo* mInfo;           /*!< The output information */
     bool mEnabled;                  /*!< The enabled state for this output */
 
     friend class QRRScreenResources;

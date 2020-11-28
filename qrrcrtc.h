@@ -22,13 +22,6 @@ class QRRScreenResources;
 class QRRCrtc
 {
 public:
-    /*!
-     * \brief Destructor
-     *
-     * Releases the internal CRTC information.
-     */
-    ~QRRCrtc(void);
-
     int x;                      /*!< The x coordinate of the top left point of the CRTC on the screen */
     int y;                      /*!< The y coordinate of the top left point of the CRTC on the screen */
     unsigned int width;         /*!< The width of the CRTC */
@@ -63,7 +56,6 @@ private:
     QRRCrtc(QRRScreenResources* parent, XRRCrtcInfo* info);
 
     QRRScreenResources* mParent;   /*!< The parent screen resources */
-    XRRCrtcInfo* mInfo;             /*!< The CRTC information */
 
     friend class QRRScreenResources;
 };

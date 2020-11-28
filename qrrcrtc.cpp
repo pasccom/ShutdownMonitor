@@ -5,24 +5,18 @@
 #include "X11/extensions/Xrandr.h"
 
 QRRCrtc::QRRCrtc(QRRScreenResources *parent, XRRCrtcInfo *info)
-    : mParent(parent), mInfo(info)
+    : mParent(parent)
 {
-    x = mInfo != nullptr ? mInfo->x : 0;
-    y = mInfo != nullptr ? mInfo->y : 0;
-    width = mInfo != nullptr ? mInfo->width : 0;
-    height = mInfo != nullptr ? mInfo->height : 0;
-    mode = mInfo != nullptr ? mInfo->mode : None;
-    rotation = mInfo != nullptr ? mInfo->rotation : RR_Rotate_0;
+    x = info != nullptr ? info->x : 0;
+    y = info != nullptr ? info->y : 0;
+    width = info != nullptr ? info->width : 0;
+    height = info != nullptr ? info->height : 0;
+    mode = info != nullptr ? info->mode : None;
+    rotation = info != nullptr ? info->rotation : RR_Rotate_0;
 
     outputs.clear();
-    for (int o = 0; o < mInfo->noutput; o++)
-        outputs.append(mInfo->outputs[o]);
-}
-
-QRRCrtc::~QRRCrtc(void)
-{
-    if (mInfo != nullptr)
-        XRRFreeCrtcInfo(mInfo);
+    for (int o = 0; o < info->noutput; o++)
+        outputs.append(info->outputs[o]);
 }
 
 QString QRRCrtc::display(void) const

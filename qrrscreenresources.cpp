@@ -53,16 +53,22 @@ void QRRScreenResources::refreshOutputs(void)
 {
     qDeleteAll(mOutputs);
 
-    for (int o = 0; o < mResources->noutput; o++)
-        mOutputs.append(new QRROutput(this, mResources->outputs[o], XRRGetOutputInfo(mDisplay, mResources, mResources->outputs[o])));
+    for (int o = 0; o < mResources->noutput; o++) {
+        XRROutputInfo* info = XRRGetOutputInfo(mDisplay, mResources, mResources->outputs[o]);
+        mOutputs.append(new QRROutput(this, mResources->outputs[o], info));
+        XRRFreeOutputInfo(info);
+    }
 }
 
 QRRCrtc* QRRScreenResources::crtc(RRCrtc crtcId)
 {
     if (crtcId == None)
         return nullptr;
-    if (!mCrtcs.contains(crtcId))
-        mCrtcs.insert(crtcId, new QRRCrtc(this, XRRGetCrtcInfo(mDisplay, mResources, crtcId)));
+    if (!mCrtcs.contains(crtcId)) {
+        XRRCrtcInfo* info = XRRGetCrtcInfo(mDisplay, mResources, crtcId);
+        mCrtcs.insert(crtcId, new QRRCrtc(this, info));
+        XRRFreeCrtcInfo(info);
+    }
     return mCrtcs.value(crtcId);
 }
 
