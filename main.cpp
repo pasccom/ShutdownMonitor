@@ -103,10 +103,11 @@ int main(int argc, char *argv[])
     // Create the theme sub-menu:
     QMenu *themeMenu = menu.addMenu(QIcon::fromTheme("palette-symbolic"), QObject::tr("Theme"));
     foreach (QString theme, availableThemes) {
-        QAction* action = themeMenu->addAction(QObject::tr(theme.toLocal8Bit().data()));
-        QObject::connect(action, &QAction::triggered, [resources, &menu, &theme, &enabledMonitorIcon, &disabledMonitorIcon] {
-            enabledMonitorIcon  = QIcon(QString(":/icons/%1/enabled-monitor.png").arg(theme));
-            disabledMonitorIcon = QIcon(QString(":/icons/%1/disabled-monitor.png").arg(theme));
+        QAction* themeAction = themeMenu->addAction(QObject::tr(theme.toLocal8Bit().data()));
+        themeAction->setData(theme);
+        QObject::connect(themeAction, &QAction::triggered, [resources, &menu, themeAction, &enabledMonitorIcon, &disabledMonitorIcon] {
+            enabledMonitorIcon  = QIcon(QString(":/icons/%1/enabled-monitor.png").arg(themeAction->data().toString()));
+            disabledMonitorIcon = QIcon(QString(":/icons/%1/disabled-monitor.png").arg(themeAction->data().toString()));
 
             foreach (QAction* action, menu.actions()) {
                 if (action->data().isNull())
