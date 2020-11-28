@@ -72,7 +72,7 @@ bool QRRScreenResources::enableOutput(QRROutput* out)
     if (out->mEnabled)
         return true;
     // The output CRTC should be in the CRTC map:
-    if (!mCrtcs.contains(out->mInfo->crtc))
+    if (!mCrtcs.contains(out->mCrtcId))
         return false;
 
     // Update the CRTCs:
@@ -93,7 +93,7 @@ bool QRRScreenResources::disableOutput(QRROutput* out)
     if (!out->mEnabled)
         return true;
     // The output CRTC should be in the CRTC map:
-    if (!mCrtcs.contains(out->mInfo->crtc))
+    if (!mCrtcs.contains(out->mCrtcId))
         return false;
 
     // Update the CRTCs:
@@ -112,9 +112,9 @@ QRect QRRScreenResources::computeTotalScreen(void) const
 {
     QRect screen;
     foreach (QRROutput* o, mOutputs) {
-        if (!mCrtcs.contains(o->mInfo->crtc))
+        if (!mCrtcs.contains(o->mCrtcId))
             continue;
-        screen |= mCrtcs.value(o->mInfo->crtc)->rect();
+        screen |= mCrtcs.value(o->mCrtcId)->rect();
     }
     return screen;
 }
@@ -123,10 +123,10 @@ QRect QRRScreenResources::computeScreen(void) const
 {
     QRect screen;
     foreach (QRROutput* o, mOutputs) {
-        if (!mCrtcs.contains(o->mInfo->crtc))
+        if (!mCrtcs.contains(o->mCrtcId))
             continue;
         if (o->mEnabled)
-            screen |= mCrtcs.value(o->mInfo->crtc)->rect();
+            screen |= mCrtcs.value(o->mCrtcId)->rect();
     }
     return screen;
 }
