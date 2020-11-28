@@ -34,11 +34,7 @@ QRRScreenResources* QRRScreenResources::getCurrent(Display* display)
 
 QRROutput* QRRScreenResources::output(RROutput outputId)
 {
-    foreach (QRROutput* output, mOutputs)
-        if (output->mId == outputId)
-            return output;
-
-    return nullptr;
+    return mOutputs.value(outputId, nullptr);
 }
 
 QList<QRROutput*> QRRScreenResources::outputs(bool refresh)
@@ -46,7 +42,7 @@ QList<QRROutput*> QRRScreenResources::outputs(bool refresh)
     if (mOutputs.isEmpty() || refresh)
         refreshOutputs();
 
-    return mOutputs;
+    return mOutputs.values();
 }
 
 void QRRScreenResources::refreshOutputs(void)
@@ -55,7 +51,7 @@ void QRRScreenResources::refreshOutputs(void)
 
     for (int o = 0; o < mResources->noutput; o++) {
         XRROutputInfo* info = XRRGetOutputInfo(mDisplay, mResources, mResources->outputs[o]);
-        mOutputs.append(new QRROutput(this, mResources->outputs[o], info));
+        mOutputs.insert(mResources->outputs[o], new QRROutput(this, mResources->outputs[o], info));
         XRRFreeOutputInfo(info);
     }
 }

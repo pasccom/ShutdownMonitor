@@ -138,7 +138,7 @@ private:
 
     Display* mDisplay;                  /*!< The associated X display */
     XRRScreenResources* mResources;    /*!< The associated screen resources */
-    QList<QRROutput*> mOutputs;         /*!< The list of output internal representations */
+    QMap<RROutput, QRROutput*> mOutputs;         /*!< The list of output internal representations */
     QMap<RRCrtc, QRRCrtc*> mCrtcs;      /*!< The map of CRTC internal representations */
 };
 
