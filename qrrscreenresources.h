@@ -77,7 +77,7 @@ public:
      * \brief Enable the given output
      *
      * Enable the given output.
-     * \param out The output to enable.
+     * \param output The output to enable.
      * \return Whether this output was successfully enabled.
      * \sa disableOutput()
      */
@@ -86,7 +86,7 @@ public:
      * \brief Disable the given output
      *
      * Disable the given output.
-     * \param out The output to disable.
+     * \param output The output to disable.
      * \return Whether this output was successfully disabled.
      * \sa enableOutput()
      */

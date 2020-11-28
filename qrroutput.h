@@ -72,7 +72,6 @@ private:
      *
      * Initialize the class with the given information.
      * \param parent The parent screen resources.
-     * \param id The output identifier.
      * \param info The output information from XrandR.
      */
     QRROutput(QRRScreenResources* parent, XRROutputInfo* info);
