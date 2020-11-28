@@ -51,7 +51,7 @@ void QRRScreenResources::refreshOutputs(void)
 
     for (int o = 0; o < mResources->noutput; o++) {
         XRROutputInfo* info = XRRGetOutputInfo(mDisplay, mResources, mResources->outputs[o]);
-        mOutputs.insert(mResources->outputs[o], new QRROutput(this, mResources->outputs[o], info));
+        mOutputs.insert(mResources->outputs[o], new QRROutput(this, info));
         XRRFreeOutputInfo(info);
     }
 }

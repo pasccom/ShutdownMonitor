@@ -5,8 +5,8 @@
 
 #include <X11/extensions/Xrandr.h>
 
-QRROutput::QRROutput(QRRScreenResources *parent, RROutput id, XRROutputInfo *info)
-    : mParent(parent), mId(id)
+QRROutput::QRROutput(QRRScreenResources *parent, XRROutputInfo *info)
+    : mParent(parent)
 {
     physicalWidth = info != nullptr ? info->mm_width : 0;
     physicalHeight = info != nullptr ? info->mm_height : 0;

@@ -75,10 +75,9 @@ private:
      * \param id The output identifier.
      * \param info The output information from XrandR.
      */
-    QRROutput(QRRScreenResources* parent, RROutput id, XRROutputInfo* info);
+    QRROutput(QRRScreenResources* parent, XRROutputInfo* info);
 
     QRRScreenResources* mParent;    /*!< The parent screen resources */
-    RROutput mId;                   /*!< The output identifier */
     RRCrtc mCrtcId;                 /*!< The id of the associated CRTC */
     bool mEnabled;                  /*!< The enabled state for this output */
 
