@@ -37,12 +37,12 @@ QRROutput* QRRScreenResources::output(RROutput outputId)
     return mOutputs.value(outputId, nullptr);
 }
 
-QList<QRROutput*> QRRScreenResources::outputs(bool refresh)
+QList<RROutput> QRRScreenResources::outputs(bool refresh)
 {
     if (mOutputs.isEmpty() || refresh)
         refreshOutputs();
 
-    return mOutputs.values();
+    return mOutputs.keys();
 }
 
 void QRRScreenResources::refreshOutputs(void)

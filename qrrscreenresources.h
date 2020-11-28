@@ -51,11 +51,11 @@ public:
     /*!
      * \brief Get all outputs
      *
-     * Get a QList of pointers to the output internal representations.
+     * Get a QList of the identifiers of all outputs.
      * \param refresh Whether the cached output list should be refreshed.
-     * \return
+     * \return The list of the identifiers of all outputs.
      */
-    QList<QRROutput*> outputs(bool refresh = false);
+    QList<RROutput> outputs(bool refresh = false);
     /*!
      * \brief Get an output
      *

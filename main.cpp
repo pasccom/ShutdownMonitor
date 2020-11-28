@@ -75,12 +75,11 @@ int main(int argc, char *argv[])
     QRRScreenResources* resources = QRRScreenResources::getCurrent(QX11Info::display());
 
     // Create the system tray menu:
-    int o = 0;
     QMenu menu;
     QIcon  enabledMonitorIcon(QString(":/icons/%1/enabled-monitor.png").arg(parser.value("theme")));
     QIcon disabledMonitorIcon(QString(":/icons/%1/disabled-monitor.png").arg(parser.value("theme")));
-    foreach (QRROutput* output, resources->outputs()) {
-        o++;
+    foreach (RROutput outputId, resources->outputs()) {
+        QRROutput* output = resources->output(outputId);
         if (output->connection != RR_Connected)
             continue;
         qDebug() << output->display();
@@ -88,9 +87,9 @@ int main(int argc, char *argv[])
         // Create an action for this connected output:
         QAction *action = menu.addAction(output->display());
         action->setIcon(output->enabled() ? enabledMonitorIcon : disabledMonitorIcon);
-        action->setData(o);
+        action->setData(QVariant::fromValue<RROutput>(outputId));
         QObject::connect(action, &QAction::triggered, [resources, action, &enabledMonitorIcon, &disabledMonitorIcon] {
-            QRROutput* output = resources->outputs().at(action->data().toUInt() - 1); // Indexing by action->data is 1-based
+            QRROutput* output = resources->output(action->data().value<RROutput>());
             if (output->enabled())
                 output->disable();
             else
@@ -112,7 +111,7 @@ int main(int argc, char *argv[])
             foreach (QAction* action, menu.actions()) {
                 if (action->data().isNull())
                     continue;
-                QRROutput* output = resources->outputs().at(action->data().toUInt() - 1); // Indexing by action->data is 1-based
+                QRROutput* output = resources->output(action->data().value<RROutput>());
                 action->setIcon(output->enabled() ? enabledMonitorIcon : disabledMonitorIcon);
             }
         });
