@@ -137,7 +137,7 @@ bool QRRScreenResources::updateCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin
     QRRCrtc* crtc = mCrtcs.value(crtcId);
 
     // Get the associated enabled outputs:
-    QList<RROutput> crtcOutputs = crtc->outputs();
+    QList<RROutput> crtcOutputs = crtc->outputs;
     for (auto it = crtcOutputs.begin(); it != crtcOutputs.end();) {
         QRROutput* o = output(*it);
         if ((o == nullptr) || !o->mEnabled)

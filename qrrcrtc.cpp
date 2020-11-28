@@ -13,22 +13,16 @@ QRRCrtc::QRRCrtc(QRRScreenResources *parent, XRRCrtcInfo *info)
     height = mInfo != nullptr ? mInfo->height : 0;
     mode = mInfo != nullptr ? mInfo->mode : None;
     rotation = mInfo != nullptr ? mInfo->rotation : RR_Rotate_0;
+
+    outputs.clear();
+    for (int o = 0; o < mInfo->noutput; o++)
+        outputs.append(mInfo->outputs[o]);
 }
 
 QRRCrtc::~QRRCrtc(void)
 {
     if (mInfo != nullptr)
         XRRFreeCrtcInfo(mInfo);
-}
-
-QList<RROutput> QRRCrtc::outputs() const
-{
-    QList<RROutput> outputs;
-
-    for (int o = 0; o < mInfo->noutput; o++)
-        outputs.append(mInfo->outputs[o]);
-
-    return outputs;
 }
 
 QString QRRCrtc::display(void) const

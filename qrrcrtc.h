@@ -2,6 +2,7 @@
 #define QRRCRTC_H
 
 #include <QString>
+#include <QList>
 #include <QRect>
 
 typedef unsigned short Rotation;
@@ -28,22 +29,14 @@ public:
      */
     ~QRRCrtc(void);
 
-    int x;                  /*!< The x coordinate of the top left point of the CRTC on the screen */
-    int y;                  /*!< The y coordinate of the top left point of the CRTC on the screen */
-    unsigned int width;     /*!< The width of the CRTC */
-    unsigned int height;    /*!< The height of the CRTC */
-    RRMode mode;            /*!< The mode of the CRTC */
-    Rotation rotation;      /*!< The rotation of the CRTC */
+    int x;                      /*!< The x coordinate of the top left point of the CRTC on the screen */
+    int y;                      /*!< The y coordinate of the top left point of the CRTC on the screen */
+    unsigned int width;         /*!< The width of the CRTC */
+    unsigned int height;        /*!< The height of the CRTC */
+    RRMode mode;                /*!< The mode of the CRTC */
+    Rotation rotation;          /*!< The rotation of the CRTC */
+    QList<RROutput> outputs;    /*! The list of the associated outputs */
 
-    /*!
-     * \brief Associated outputs
-     *
-     * Return the list of the outputs associated with this CRTC.
-     * \note There may be mutiple outputs associated with one CRTC.
-     * In that case the output is duplicated.
-     * \return The list of the associated outputs
-     */
-    QList<RROutput> outputs() const;
     /*!
      * \brief User-friendly name of this CRTC
      *
