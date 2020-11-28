@@ -5,6 +5,7 @@
 
 typedef unsigned long XID;
 typedef XID RROutput;
+typedef XID RRCrtc;
 typedef struct _XRROutputInfo XRROutputInfo;
 typedef unsigned short Connection;
 
@@ -83,8 +84,9 @@ private:
      */
     QRROutput(QRRScreenResources* parent, RROutput id, XRROutputInfo* info);
 
-    QRRScreenResources* mParent;   /*!< The parent screen resources */
+    QRRScreenResources* mParent;    /*!< The parent screen resources */
     RROutput mId;                   /*!< The output identifier */
+    RRCrtc mCrtcId;                 /*!< The id of the associated CRTC */
     XRROutputInfo* mInfo;           /*!< The output information */
     bool mEnabled;                  /*!< The enabled state for this output */
 

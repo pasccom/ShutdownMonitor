@@ -12,6 +12,7 @@ QRROutput::QRROutput(QRRScreenResources *parent, RROutput id, XRROutputInfo *inf
     physicalHeight = mInfo != nullptr ? mInfo->mm_height : 0;
     name = mInfo != nullptr ? QString::fromLocal8Bit(QByteArray(mInfo->name, mInfo->nameLen)) : QString();
     connection = mInfo != nullptr ? mInfo->connection : RR_UnknownConnection;
+    mCrtcId = mInfo != nullptr ? mInfo->crtc : None;
 
     mEnabled = mInfo != nullptr ? mParent->crtc(mInfo->crtc) != nullptr : false;
 }
@@ -24,7 +25,7 @@ QRROutput::~QRROutput(void)
 
 QRRCrtc* QRROutput::crtc(void) const
 {
-    return mInfo != nullptr ? mParent->crtc(mInfo->crtc): nullptr;
+    return mCrtcId != None ? mParent->crtc(mCrtcId): nullptr;
 }
 
 QString QRROutput::display(void) const
