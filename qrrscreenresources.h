@@ -81,7 +81,7 @@ public:
      * \return Whether this output was successfully enabled.
      * \sa disableOutput()
      */
-    bool enableOutput(QRROutput* out);
+    bool enableOutput(QRROutput* output);
     /*!
      * \brief Disable the given output
      *
@@ -90,7 +90,7 @@ public:
      * \return Whether this output was successfully disabled.
      * \sa enableOutput()
      */
-    bool disableOutput(QRROutput* out);
+    bool disableOutput(QRROutput* output);
 private:
     /*!
      * \brief Constructor

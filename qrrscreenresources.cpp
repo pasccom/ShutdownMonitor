@@ -68,18 +68,18 @@ QRRCrtc* QRRScreenResources::crtc(RRCrtc crtcId)
     return mCrtcs.value(crtcId);
 }
 
-bool QRRScreenResources::enableOutput(QRROutput* out)
+bool QRRScreenResources::enableOutput(QRROutput* output)
 {
     // The output is already enabled:
-    if (out->mEnabled)
+    if (output->mEnabled)
         return true;
     // The output CRTC should be in the CRTC map:
-    if (!mCrtcs.contains(out->mCrtcId))
+    if (!mCrtcs.contains(output->mCrtcId))
         return false;
 
     // Update the CRTCs:
     bool ans = true;
-    out->mEnabled = true;
+    output->mEnabled = true;
     QRect totalScreen = computeTotalScreen();
     QRect newScreen = computeScreen();
     XGrabServer(mDisplay);
@@ -89,18 +89,18 @@ bool QRRScreenResources::enableOutput(QRROutput* out)
     return ans;
 }
 
-bool QRRScreenResources::disableOutput(QRROutput* out)
+bool QRRScreenResources::disableOutput(QRROutput* output)
 {
     // The output is already disabled:
-    if (!out->mEnabled)
+    if (!output->mEnabled)
         return true;
     // The output CRTC should be in the CRTC map:
-    if (!mCrtcs.contains(out->mCrtcId))
+    if (!mCrtcs.contains(output->mCrtcId))
         return false;
 
     // Update the CRTCs:
     bool ans = true;
-    out->mEnabled = false;
+    output->mEnabled = false;
     QRect totalScreen = computeTotalScreen();
     QRect newScreen = computeScreen();
     XGrabServer(mDisplay);
