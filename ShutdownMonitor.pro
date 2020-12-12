@@ -56,7 +56,7 @@ isEmpty(QMAKE_LUPDATE) {
 lupdate.depends += $$_PRO_FILE_
 lupdate.depends += $$SOURCES
 lupdate.depends += $$HEADERS
-lupdate.commands = $$QMAKE_LUPDATE \"$$_PRO_FILE_\"
+lupdate.commands = $$QMAKE_LUPDATE -no-obsolete \"$$_PRO_FILE_\"
 
 QMAKE_EXTRA_TARGETS += lupdate
 
