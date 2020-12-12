@@ -16,6 +16,9 @@ CONFIG += c++11
 }
 LIBS += -lXrandr -lX11
 
+DEFINES += SHUTDOWN_MONITOR_CONSOLE
+DEFINES += SHUTDOWN_MONITOR_SYSTRAY
+
 # The headers and source files:
 HEADERS +=  qrrcrtc.h \
             qrroutput.h \
@@ -26,7 +29,7 @@ SOURCES +=  main.cpp \
             qrrscreenresources.cpp
 
 # The resources:
-RESOURCES += shutdownmonitor.qrc
+contains(DEFINES, SHUTDOWN_MONITOR_SYSTRAY): RESOURCES += shutdownmonitor.qrc
 
 # The translations:
 TRANSLATIONS += shutdownmonitor_en.ts \

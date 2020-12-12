@@ -18,6 +18,12 @@
 
 #include <X11/extensions/Xrandr.h>
 
+#ifndef SHUTDOWN_MONITOR_CONSOLE
+#   ifndef SHUTDOWN_MONITOR_SYSTRAY
+#       error -DSHUTDOWN_MONITOR_CONSOLE or -DSHUTDOWN_MONITOR_SYSTRAY is required
+#   endif
+#endif
+
 /*!
  * \mainpage Shutdown monitor documentation
  *
@@ -32,7 +38,7 @@
  * A blue monitor \image{inline} html enabled-monitor.png "" is an enabled monitor, while
  * a black monitor \image{inline} html disabled-monitor.png "" is a disabled monitor.
  */
-
+#ifdef SHUTDOWN_MONITOR_CONSOLE
 void toggleOutputs(QRRScreenResources* resources, QStringList& outputs)
 {
     foreach (RROutput outputId, resources->outputs()) {
@@ -54,6 +60,7 @@ void signalHandler(int signum) {
     char a = 'o';
     write(socketFds[0], &a, 1);
 }
+#endif // SHUTDOWN_MONITOR_CONSOLE
 
 int main(int argc, char *argv[])
 {
@@ -75,34 +82,29 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    // Check that system tray is available:
-    if (!QSystemTrayIcon::isSystemTrayAvailable()) {
-        qWarning() << QObject::tr("This program requires the system tray");
-        return -2;
-    }
-
     // Setup command line arguments parser:
     QCommandLineParser parser;
     parser.addVersionOption();
     parser.addHelpOption();
     parser.setApplicationDescription(QObject::tr("Enable and disable the monitors from the system tray or the command line."));
+#ifdef SHUTDOWN_MONITOR_SYSTRAY
     parser.addOption(QCommandLineOption("theme", QObject::tr("The theme to use for the icons. It can be 'light' or 'dark'."), QObject::tr("theme"), "light"));
+#endif // SHUTDOWN_MONITOR_SYSTRAY
+#ifdef SHUTDOWN_MONITOR_CONSOLE
     parser.addOption(QCommandLineOption({"t", "toggle-output"}, QObject::tr("The output to toggle before starting."), QObject::tr("output")));
     parser.addOption(QCommandLineOption({"l", "list-outputs"}, QObject::tr("List outputs and quit.")));
+#endif // SHUTDOWN_MONITOR_CONSOLE
     parser.process(app);
-
-    // Check theme:
-    QStringList availableThemes;
-    availableThemes << QT_TRANSLATE_NOOP("QObject", "light");
-    availableThemes << QT_TRANSLATE_NOOP("QObject",  "dark");
-    if (!availableThemes.contains(parser.value("theme"))) {
-        qWarning() << QObject::tr("Unsupported theme: %1").arg(parser.value("theme"));
-        parser.showHelp(-3);
-    }
 
     // Load screen resources:
     QRRScreenResources* resources = QRRScreenResources::getCurrent(QX11Info::display());
+#ifdef SHUTDOWN_MONITOR_SYSTRAY
+    bool done = false;
+#else // SHUTDOWN_MONITOR_SYSTRAY
+    bool done = true;
+#endif // SHUTDOWN_MONITOR_SYSTRAY
 
+#ifdef SHUTDOWN_MONITOR_CONSOLE
     // List outputs:
     if (parser.isSet("list-outputs")) {
         foreach (RROutput outputId, resources->outputs()) {
@@ -113,9 +115,7 @@ int main(int argc, char *argv[])
                 continue;
             std::cout << qPrintable(output->name) << std::endl;
         }
-        qDebug() << "Delete screen resources";
-        delete resources;
-        return 0;
+        done = true;
     }
 
     // Toggle output:
@@ -142,10 +142,30 @@ int main(int argc, char *argv[])
                 toggleOutputs(resources, outputs);
             }
         }
+        done = true;
+    }
 
+    if (done) {
         qDebug() << "Delete screen resources";
         delete resources;
         return 0;
+    }
+#endif // SHUTDOWN_MONITOR_CONSOLE
+
+#ifdef SHUTDOWN_MONITOR_SYSTRAY
+    // Check that system tray is available:
+    if (!QSystemTrayIcon::isSystemTrayAvailable()) {
+        qWarning() << QObject::tr("This program requires the system tray");
+        return -2;
+    }
+
+    // Check theme:
+    QStringList availableThemes;
+    availableThemes << QT_TRANSLATE_NOOP("QObject", "light");
+    availableThemes << QT_TRANSLATE_NOOP("QObject",  "dark");
+    if (!availableThemes.contains(parser.value("theme"))) {
+        qWarning() << QObject::tr("Unsupported theme: %1").arg(parser.value("theme"));
+        parser.showHelp(-3);
     }
 
     // Create the system tray menu:
@@ -214,4 +234,5 @@ int main(int argc, char *argv[])
 
     // Start application event loop:
     return app.exec();
+#endif // SHUTDOWN_MONITOR_SYSTRAY
 }
