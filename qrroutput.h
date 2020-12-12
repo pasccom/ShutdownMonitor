@@ -47,7 +47,7 @@ public:
      * Returns whether this output is currently enabled.
      * \note Disconnected outputs are disabled, but connected outputs can be disabled.
      * \return Whether this output is enabled.
-     * \sa enable(), disable()
+     * \sa enable(), disable(), toggle()
      */
     inline bool enabled(void) const {return mEnabled;}
     /*!
@@ -63,9 +63,18 @@ public:
      *
      * Disable the output.
      * \return Whether this output was successfully disabled.
-     * \sa enable(), disabled()
+     * \sa enable(), enabled()
      */
     bool disable(void);
+    /*!
+     * \brief Toggle the output
+     *
+     * Disable the output if it is enabled, or
+     * enable the output if it is disabled.
+     * \return Whether this output was successfully toggled.
+     * \sa enable(), disable(), enabled()
+     */
+    bool toggle(void);
 private:
     /*!
      * \brief Constructor

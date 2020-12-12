@@ -42,3 +42,11 @@ bool QRROutput::disable(void)
     return mParent->disableOutput(this);
 }
 
+bool QRROutput::toggle(void)
+{
+    if (mEnabled)
+        return mParent->disableOutput(this);
+    else
+        return mParent->enableOutput(this);
+
+}
