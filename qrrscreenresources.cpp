@@ -32,9 +32,24 @@ QRRScreenResources* QRRScreenResources::getCurrent(Display* display)
     return new QRRScreenResources(display, XRRGetScreenResourcesCurrent(display, root));
 }
 
-QRROutput* QRRScreenResources::output(RROutput outputId)
+QRROutput* QRRScreenResources::output(RROutput outputId) const
 {
     return mOutputs.value(outputId, nullptr);
+}
+
+QRROutput* QRRScreenResources::output(const QString& name) const
+{
+    foreach (RROutput outputId, outputs()) {
+        QRROutput* output = mOutputs.value(outputId, nullptr);
+        if (output == nullptr)
+            continue;
+        if (output->connection != RR_Connected)
+            continue;
+        if (QString::compare(output->name, name, Qt::CaseSensitive) == 0)
+            return output;
+    }
+
+    return nullptr;
 }
 
 QList<RROutput> QRRScreenResources::outputs(bool refresh)

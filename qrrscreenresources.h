@@ -52,18 +52,38 @@ public:
      * \brief Get all outputs
      *
      * Get a QList of the identifiers of all outputs.
+     * Refresh the output cache if needed.
      * \param refresh Whether the cached output list should be refreshed.
      * \return The list of the identifiers of all outputs.
+     * \sa outputs()
      */
     QList<RROutput> outputs(bool refresh = false);
     /*!
-     * \brief Get an output
+     * \brief Get all outputs
      *
-     * Get a pointer to the corresponding output internal representation.
+     * Get a QList of the identifiers of all outputs.
+     * \note Do not refresh the output cache.
+     * \return The list of the identifiers of all outputs.
+     * \sa outputs(bool)
+     */
+    inline QList<RROutput> outputs(void) const {return mOutputs.keys();}
+
+    /*!
+     * \brief Get an output by its id
+     *
+     * Get a pointer to the output internal representation corresponding to the given identifier.
      * \param outputId The desired output identifier.
      * \return The output internal representation corresponding to the given identifier.
      */
-    QRROutput* output(RROutput outputId);
+    QRROutput* output(RROutput outputId) const;
+    /*!
+     * \brief Get an output by its name
+     *
+     * Get a pointer to the output internal representation corresponding to the given name.
+     * \param name The desired output name.
+     * \return The output internal representation corresponding to the given name.
+     */
+    QRROutput* output(const QString& name) const;
     /*!
      * \brief Get a CRTC
      *
