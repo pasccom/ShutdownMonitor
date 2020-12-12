@@ -12,10 +12,6 @@
         <translation>This program requires the system tray</translation>
     </message>
     <message>
-        <source>Enable and disable the monitors from a system tray icon</source>
-        <translation>Enable and disable the monitors from a system tray icon</translation>
-    </message>
-    <message>
         <source>The theme to use for the icons. It can be &apos;light&apos; or &apos;dark&apos;.</source>
         <translation>The theme to use for the icons. It can be &apos;light&apos; or &apos;dark&apos;.</translation>
     </message>
@@ -38,6 +34,30 @@
     <message>
         <source>dark</source>
         <translation>dark</translation>
+    </message>
+    <message>
+        <source>theme</source>
+        <translation>theme</translation>
+    </message>
+    <message>
+        <source>output</source>
+        <translation>output</translation>
+    </message>
+    <message>
+        <source>Press Ctrl+C to restore previous state. </source>
+        <translation>Press Ctrl+C to restore previous state. </translation>
+    </message>
+    <message>
+        <source>The output to toggle before starting.</source>
+        <translation>The output to toggle before starting.</translation>
+    </message>
+    <message>
+        <source>List outputs and quit.</source>
+        <translation>List outputs and quit.</translation>
+    </message>
+    <message>
+        <source>Enable and disable the monitors from the system tray or the command line.</source>
+        <translation>Enable and disable the monitors from the system tray or the command line.</translation>
     </message>
 </context>
 </TS>

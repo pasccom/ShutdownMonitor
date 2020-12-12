@@ -11,6 +11,11 @@
 
 #include <QtDebug>
 
+#include <iostream>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/socket.h>
+
 #include <X11/extensions/Xrandr.h>
 
 /*!
@@ -27,6 +32,28 @@
  * A blue monitor \image{inline} html enabled-monitor.png "" is an enabled monitor, while
  * a black monitor \image{inline} html disabled-monitor.png "" is a disabled monitor.
  */
+
+void toggleOutputs(QRRScreenResources* resources, QStringList& outputs)
+{
+    foreach (RROutput outputId, resources->outputs()) {
+        QRROutput* output = resources->output(outputId);
+        if (output == nullptr)
+            continue;
+        if (output->connection != RR_Connected)
+            continue;
+        foreach (QString name, outputs) {
+            if (QString::compare(output->name, name, Qt::CaseSensitive) == 0)
+                output->toggle();
+        }
+    }
+}
+
+static int socketFds[2];
+void signalHandler(int signum) {
+    Q_UNUSED(signum);
+    char a = 'o';
+    write(socketFds[0], &a, 1);
+}
 
 int main(int argc, char *argv[])
 {
@@ -58,8 +85,10 @@ int main(int argc, char *argv[])
     QCommandLineParser parser;
     parser.addVersionOption();
     parser.addHelpOption();
-    parser.setApplicationDescription(QObject::tr("Enable and disable the monitors from a system tray icon"));
-    parser.addOption(QCommandLineOption("theme", QObject::tr("The theme to use for the icons. It can be 'light' or 'dark'."), "theme", "light"));
+    parser.setApplicationDescription(QObject::tr("Enable and disable the monitors from the system tray or the command line."));
+    parser.addOption(QCommandLineOption("theme", QObject::tr("The theme to use for the icons. It can be 'light' or 'dark'."), QObject::tr("theme"), "light"));
+    parser.addOption(QCommandLineOption({"t", "toggle-output"}, QObject::tr("The output to toggle before starting."), QObject::tr("output")));
+    parser.addOption(QCommandLineOption({"l", "list-outputs"}, QObject::tr("List outputs and quit.")));
     parser.process(app);
 
     // Check theme:
@@ -74,6 +103,51 @@ int main(int argc, char *argv[])
     // Load screen resources:
     QRRScreenResources* resources = QRRScreenResources::getCurrent(QX11Info::display());
 
+    // List outputs:
+    if (parser.isSet("list-outputs")) {
+        foreach (RROutput outputId, resources->outputs()) {
+            QRROutput* output = resources->output(outputId);
+            if (output == nullptr)
+                continue;
+            if (output->connection != RR_Connected)
+                continue;
+            std::cout << qPrintable(output->name) << std::endl;
+        }
+        qDebug() << "Delete screen resources";
+        delete resources;
+        return 0;
+    }
+
+    // Toggle output:
+    QStringList outputs = parser.values("toggle-output");
+    if (!outputs.isEmpty()) {
+        if (socketpair(AF_UNIX, SOCK_RAW, 0, socketFds) != 0) {
+            qWarning() << "Could not create socket pair. Error:" << errno << QString("(%1)").arg(strerror(errno));
+        } else {
+            struct sigaction sigInt;
+            sigInt.sa_handler = signalHandler;
+            sigemptyset(&sigInt.sa_mask);
+            sigInt.sa_flags = SA_RESTART;
+
+            if (sigaction(SIGINT, &sigInt, 0) != 0) {
+                qWarning() << "Could not install signal handler. Error:" << errno << QString("(%1)").arg(strerror(errno));
+            } else {
+                char buffer;
+
+                std::cout << qPrintable(QObject::tr("Press Ctrl+C to restore previous state. "));
+                std::cout.flush();
+                toggleOutputs(resources, outputs);
+                read(socketFds[1], &buffer, 1);
+                std::cout << std::endl;
+                toggleOutputs(resources, outputs);
+            }
+        }
+
+        qDebug() << "Delete screen resources";
+        delete resources;
+        return 0;
+    }
+
     // Create the system tray menu:
     int o = 0;
     QMenu menu;
@@ -81,6 +155,8 @@ int main(int argc, char *argv[])
     QIcon disabledMonitorIcon(QString(":/icons/%1/disabled-monitor.png").arg(parser.value("theme")));
     foreach (RROutput outputId, resources->outputs()) {
         QRROutput* output = resources->output(outputId);
+        if (output == nullptr)
+            continue;
         if (output->connection != RR_Connected)
             continue;
         qDebug() << output->display();
@@ -98,11 +174,7 @@ int main(int argc, char *argv[])
         action->setData(QVariant::fromValue<RROutput>(outputId));
         QObject::connect(action, &QAction::triggered, [resources, action, &enabledMonitorIcon, &disabledMonitorIcon] {
             QRROutput* output = resources->output(action->data().value<RROutput>());
-            if (output->enabled())
-                output->disable();
-            else
-                output->enable();
-
+            output->toggle();
             action->setIcon(output->enabled() ? enabledMonitorIcon : disabledMonitorIcon);
         });
     }
