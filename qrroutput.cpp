@@ -1,4 +1,5 @@
 #include "qrroutput.h"
+#include "qrrcrtc.h"
 #include "qrrscreenresources.h"
 
 #include <QtDebug>
@@ -24,12 +25,11 @@ QRRCrtc* QRROutput::crtc(void) const
 
 QString QRROutput::display(void) const
 {
-    if (name.isNull())
+    if (name.isNull() || (crtc() == nullptr))
         return name;
 
-    return QString("%1 (%2mm x %3mm)").arg(name)
-                                      .arg(physicalWidth)
-                                      .arg(physicalHeight);
+    return QString("%1 (%2)").arg(name)
+                             .arg(crtc()->display());
 }
 
 bool QRROutput::enable(void)
