@@ -54,27 +54,30 @@ public:
      * \brief Enable the output
      *
      * Enable the output.
+     * \param grab Whether to grab the X display.
      * \return Whether this output was successfully enabled.
      * \sa disable(), enabled()
      */
-    bool enable(void);
+    bool enable(bool grab = false);
     /*!
      * \brief Disable the output
      *
      * Disable the output.
+     * \param grab Whether to grab the X display.
      * \return Whether this output was successfully disabled.
      * \sa enable(), enabled()
      */
-    bool disable(void);
+    bool disable(bool grab = false);
     /*!
      * \brief Toggle the output
      *
      * Disable the output if it is enabled, or
      * enable the output if it is disabled.
+     * \param grab Whether to grab the X display.
      * \return Whether this output was successfully toggled.
      * \sa enable(), disable(), enabled()
      */
-    bool toggle(void);
+    bool toggle(bool grab = false);
 private:
     /*!
      * \brief Constructor

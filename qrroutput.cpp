@@ -32,21 +32,21 @@ QString QRROutput::display(void) const
                              .arg(crtc()->display());
 }
 
-bool QRROutput::enable(void)
+bool QRROutput::enable(bool grab)
 {
-    return mParent->enableOutput(this);
+    return mParent->enableOutput(this, grab);
 }
 
-bool QRROutput::disable(void)
+bool QRROutput::disable(bool grab)
 {
-    return mParent->disableOutput(this);
+    return mParent->disableOutput(this, grab);
 }
 
-bool QRROutput::toggle(void)
+bool QRROutput::toggle(bool grab)
 {
     if (mEnabled)
-        return mParent->disableOutput(this);
+        return mParent->disableOutput(this, grab);
     else
-        return mParent->enableOutput(this);
+        return mParent->enableOutput(this, grab);
 
 }

@@ -98,19 +98,21 @@ public:
      *
      * Enable the given output.
      * \param output The output to enable.
+     * \param grab Whether to grab the X display.
      * \return Whether this output was successfully enabled.
      * \sa disableOutput()
      */
-    bool enableOutput(QRROutput* output);
+    bool enableOutput(QRROutput* output, bool grab = false);
     /*!
      * \brief Disable the given output
      *
      * Disable the given output.
      * \param output The output to disable.
+     * \param grab Whether to grab the X display.
      * \return Whether this output was successfully disabled.
      * \sa enableOutput()
      */
-    bool disableOutput(QRROutput* output);
+    bool disableOutput(QRROutput* output, bool grab = false);
 private:
     /*!
      * \brief Constructor

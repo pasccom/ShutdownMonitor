@@ -83,7 +83,7 @@ QRRCrtc* QRRScreenResources::crtc(RRCrtc crtcId)
     return mCrtcs.value(crtcId);
 }
 
-bool QRRScreenResources::enableOutput(QRROutput* output)
+bool QRRScreenResources::enableOutput(QRROutput* output, bool grab)
 {
     // The output is already enabled:
     if (output->mEnabled)
@@ -97,14 +97,16 @@ bool QRRScreenResources::enableOutput(QRROutput* output)
     output->mEnabled = true;
     QRect totalScreen = computeTotalScreen();
     QRect newScreen = computeScreen();
-    XGrabServer(mDisplay);
+    if (grab)
+        XGrabServer(mDisplay);
     for (auto it = mCrtcs.constBegin(); it != mCrtcs.constEnd(); it++)
         ans &= updateCrtcOrigin(it.key(), it.value()->rect().topLeft() - newScreen.topLeft() + totalScreen.topLeft());
-    XUngrabServer(mDisplay);
+    if (grab)
+        XUngrabServer(mDisplay);
     return ans;
 }
 
-bool QRRScreenResources::disableOutput(QRROutput* output)
+bool QRRScreenResources::disableOutput(QRROutput* output, bool grab)
 {
     // The output is already disabled:
     if (!output->mEnabled)
@@ -118,10 +120,12 @@ bool QRRScreenResources::disableOutput(QRROutput* output)
     output->mEnabled = false;
     QRect totalScreen = computeTotalScreen();
     QRect newScreen = computeScreen();
-    XGrabServer(mDisplay);
+    if (grab)
+        XGrabServer(mDisplay);
     for (auto it = mCrtcs.constBegin(); it != mCrtcs.constEnd(); it++)
         ans &= updateCrtcOrigin(it.key(), it.value()->rect().topLeft() - newScreen.topLeft() + totalScreen.topLeft());
-    XUngrabServer(mDisplay);
+    if (grab)
+        XUngrabServer(mDisplay);
     return ans;
 }
 
