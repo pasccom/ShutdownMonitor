@@ -19,7 +19,6 @@
 #ifndef QRRSCREENRESOURCES_H
 #define QRRSCREENRESOURCES_H
 
-#include <QList>
 #include <QMap>
 
 typedef unsigned long XID;
@@ -30,6 +29,8 @@ typedef struct _XRRScreenResources XRRScreenResources;
 
 class QRROutput;
 class QRRCrtc;
+class QPoint;
+class QRect;
 
 /*!
  * \brief Internal reprsentation for XrandR screen resources
