@@ -40,10 +40,11 @@
  *
  * \section console Command-line interface
  * Hereafter is a table describing command-line options:
- * | Short | Long form          | Arguments   | Description                             |
- * | ----- | ------------------ | ----------- | --------------------------------------- |
- * | \c -t | \c --toggle-output | \c <output> | The outputs to disable before starting. |
- * | \c -l | \c --list-outputs  |             | List outputs and quit.                  |
+ * | Short | Long form          | Arguments   | Description                                                    |
+ * | :---- | :----------------- | :---------- | :------------------------------------------------------------- |
+ * | \c -t | \c --toggle-output | \c <output> | The outputs to disable before starting (comma-separated list). |
+ * | ^     | ^                  | ^           | This switch can also be repeated to list multiple outputs.     |
+ * | \c -l | \c --list-outputs  |             | List outputs and quit.                                         |
  */
 #ifdef SHUTDOWN_MONITOR_CONSOLE
 QStringList toggleOutputs(QRRScreenResources* resources, QStringList& outputs)
@@ -104,7 +105,10 @@ int main(int argc, char *argv[])
     parser.addOption(QCommandLineOption("theme", QObject::tr("The theme to use for the icons. It can be 'light' or 'dark'."), QObject::tr("theme"), "light"));
 #endif // SHUTDOWN_MONITOR_SYSTRAY
 #ifdef SHUTDOWN_MONITOR_CONSOLE
-    parser.addOption(QCommandLineOption({"t", "toggle-output"}, QObject::tr("The outputs to disable before starting."), QObject::tr("output")));
+    parser.addOption(QCommandLineOption({"t", "toggle-output"},
+                     QObject::tr("The outputs to disable before starting (comma-separated list).\n"
+                                 "This switch can also be repeated to list multiple outputs."),
+                     QObject::tr("output")));
     parser.addOption(QCommandLineOption({"l", "list-outputs"}, QObject::tr("List outputs and quit.")));
 #endif // SHUTDOWN_MONITOR_CONSOLE
     parser.process(app);
@@ -132,7 +136,9 @@ int main(int argc, char *argv[])
     }
 
     // Toggle output:
-    QStringList outputs = parser.values("toggle-output");
+    QStringList outputs;
+    foreach (QString outputList, parser.values("toggle-output"))
+        outputs << outputList.split(',', QString::SkipEmptyParts);
     if (!outputs.isEmpty()) {
         if (socketpair(AF_UNIX, SOCK_RAW, 0, socketFds) != 0) {
             qWarning() << "Could not create socket pair. Error:" << errno << QString("(%1)").arg(strerror(errno));

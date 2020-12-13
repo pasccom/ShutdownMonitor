@@ -56,8 +56,10 @@
         <translation>Activez et désactivez les écrans depuis la boîte à miniatures ou la ligne de commande.</translation>
     </message>
     <message>
-        <source>The outputs to disable before starting.</source>
-        <translation>Les sorties à éteindre avant de démarrer.</translation>
+        <source>The outputs to disable before starting (comma-separated list).
+This switch can also be repeated to list multiple outputs.</source>
+        <translation>Les sorties à éteindre avant de démarrer. (séparées par des virgules).
+Cet argument peut aussi être répété pour lister plusieurs sorties.</translation>
     </message>
 </context>
 </TS>

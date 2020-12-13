@@ -56,8 +56,10 @@
         <translation>Enable and disable the monitors from the system tray or the command line.</translation>
     </message>
     <message>
-        <source>The outputs to disable before starting.</source>
-        <translation>The outputs to disable before starting.</translation>
+        <source>The outputs to disable before starting (comma-separated list).
+This switch can also be repeated to list multiple outputs.</source>
+        <translation>The outputs to disable before starting (comma-separated list).
+This switch can also be repeated to list multiple outputs.</translation>
     </message>
 </context>
 </TS>
