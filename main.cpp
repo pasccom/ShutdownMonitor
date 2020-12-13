@@ -27,16 +27,23 @@
 /*!
  * \mainpage Shutdown monitor documentation
  *
- * \section Description
+ * \section description Description
  * This small program allows to enable and disable the monitors
  * from a system tray icon. The screen configuration is kept unchanged
  * when the monitor are disabled and enabled afterwards.
  *
- * \section Usage
+ * \section systray System tray interface
  * Right click on the system tray icon to make the context menu appear.
  * In the context menu, you can toogle a monitor by clicking on it.
  * A blue monitor \image{inline} html enabled-monitor.png "" is an enabled monitor, while
  * a black monitor \image{inline} html disabled-monitor.png "" is a disabled monitor.
+ *
+ * \section console Command-line interface
+ * Hereafter is a table describing command-line options:
+ * | Short | Long form          | Arguments   | Description                           |
+ * | ----- | ------------------ | ----------- | ------------------------------------- |
+ * | \c -t | \c --toggle-output | \c <output> | The output to toggle before starting. |
+ * | \c -l | \c --list-outputs  |             | List outputs and quit.                |
  */
 #ifdef SHUTDOWN_MONITOR_CONSOLE
 void toggleOutputs(QRRScreenResources* resources, QStringList& outputs)
