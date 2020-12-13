@@ -48,16 +48,16 @@
         <translation>Press Ctrl+C to restore previous state. </translation>
     </message>
     <message>
-        <source>The output to toggle before starting.</source>
-        <translation>The output to toggle before starting.</translation>
-    </message>
-    <message>
         <source>List outputs and quit.</source>
         <translation>List outputs and quit.</translation>
     </message>
     <message>
         <source>Enable and disable the monitors from the system tray or the command line.</source>
         <translation>Enable and disable the monitors from the system tray or the command line.</translation>
+    </message>
+    <message>
+        <source>The outputs to disable before starting.</source>
+        <translation>The outputs to disable before starting.</translation>
     </message>
 </context>
 </TS>

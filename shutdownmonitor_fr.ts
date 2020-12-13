@@ -48,16 +48,16 @@
         <translation>Appuyez sur Ctrl+C pour retourner à l&apos;état antérieur. </translation>
     </message>
     <message>
-        <source>The output to toggle before starting.</source>
-        <translation>Les sorties à modifier avant de démarrer.</translation>
-    </message>
-    <message>
         <source>List outputs and quit.</source>
         <translation>Liste les sorties et quitte.</translation>
     </message>
     <message>
         <source>Enable and disable the monitors from the system tray or the command line.</source>
         <translation>Activez et désactivez les écrans depuis la boîte à miniatures ou la ligne de commande.</translation>
+    </message>
+    <message>
+        <source>The outputs to disable before starting.</source>
+        <translation>Les sorties à éteindre avant de démarrer.</translation>
     </message>
 </context>
 </TS>

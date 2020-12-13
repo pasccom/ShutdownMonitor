@@ -40,10 +40,10 @@
  *
  * \section console Command-line interface
  * Hereafter is a table describing command-line options:
- * | Short | Long form          | Arguments   | Description                           |
- * | ----- | ------------------ | ----------- | ------------------------------------- |
- * | \c -t | \c --toggle-output | \c <output> | The output to toggle before starting. |
- * | \c -l | \c --list-outputs  |             | List outputs and quit.                |
+ * | Short | Long form          | Arguments   | Description                             |
+ * | ----- | ------------------ | ----------- | --------------------------------------- |
+ * | \c -t | \c --toggle-output | \c <output> | The outputs to disable before starting. |
+ * | \c -l | \c --list-outputs  |             | List outputs and quit.                  |
  */
 #ifdef SHUTDOWN_MONITOR_CONSOLE
 void toggleOutputs(QRRScreenResources* resources, QStringList& outputs)
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     parser.addOption(QCommandLineOption("theme", QObject::tr("The theme to use for the icons. It can be 'light' or 'dark'."), QObject::tr("theme"), "light"));
 #endif // SHUTDOWN_MONITOR_SYSTRAY
 #ifdef SHUTDOWN_MONITOR_CONSOLE
-    parser.addOption(QCommandLineOption({"t", "toggle-output"}, QObject::tr("The output to toggle before starting."), QObject::tr("output")));
+    parser.addOption(QCommandLineOption({"t", "toggle-output"}, QObject::tr("The outputs to disable before starting."), QObject::tr("output")));
     parser.addOption(QCommandLineOption({"l", "list-outputs"}, QObject::tr("List outputs and quit.")));
 #endif // SHUTDOWN_MONITOR_CONSOLE
     parser.process(app);
