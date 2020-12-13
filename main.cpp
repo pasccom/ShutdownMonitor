@@ -29,8 +29,15 @@
  *
  * \section description Description
  * This small program allows to enable and disable the monitors
- * from a system tray icon. The screen configuration is kept unchanged
- * when the monitor are disabled and enabled afterwards.
+ * from a system tray icon or the command-line.
+ * The screen configuration is kept unchanged when the monitor
+ * are disabled and enabled afterwards.
+ *
+ * \note When exiting the program all the monitors which were
+ * enabled when it started are restored to their initial state.
+ *
+ * \note Monitors disabled when the programs is started cannot
+ * be enabled. This may be changed in a future version.
  *
  * \section systray System tray interface
  * Right click on the system tray icon to make the context menu appear.
@@ -248,6 +255,10 @@ int main(int argc, char *argv[])
 
     // Ensure that the screen resources are deallocated before quitting the application:
     QObject::connect(&app, &QApplication::aboutToQuit, [resources] {
+        foreach (RROutput outputId, resources->outputs()) {
+            QRROutput* output = resources->output(outputId);
+            output->enable();
+        }
         qDebug() << "Delete screen resources";
         delete resources;
     });
