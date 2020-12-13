@@ -46,8 +46,10 @@
  * | \c -l | \c --list-outputs  |             | List outputs and quit.                  |
  */
 #ifdef SHUTDOWN_MONITOR_CONSOLE
-void toggleOutputs(QRRScreenResources* resources, QStringList& outputs)
+QStringList toggleOutputs(QRRScreenResources* resources, QStringList& outputs)
 {
+    QStringList toggledOutputs;
+
     foreach (RROutput outputId, resources->outputs()) {
         QRROutput* output = resources->output(outputId);
         if (output == nullptr)
@@ -55,10 +57,14 @@ void toggleOutputs(QRRScreenResources* resources, QStringList& outputs)
         if (output->connection != RR_Connected)
             continue;
         foreach (QString name, outputs) {
-            if (QString::compare(output->name, name, Qt::CaseSensitive) == 0)
-                output->toggle();
+            if (QString::compare(output->name, name, Qt::CaseSensitive) == 0) {
+                if (output->toggle())
+                    toggledOutputs << name;
+            }
         }
     }
+
+    return toggledOutputs;
 }
 
 static int socketFds[2];
@@ -140,13 +146,14 @@ int main(int argc, char *argv[])
                 qWarning() << "Could not install signal handler. Error:" << errno << QString("(%1)").arg(strerror(errno));
             } else {
                 char buffer;
+                QStringList toggledOutputs;
 
                 std::cout << qPrintable(QObject::tr("Press Ctrl+C to restore previous state. "));
                 std::cout.flush();
-                toggleOutputs(resources, outputs);
+                toggledOutputs = toggleOutputs(resources, outputs);
                 read(socketFds[1], &buffer, 1);
                 std::cout << std::endl;
-                toggleOutputs(resources, outputs);
+                toggleOutputs(resources, toggledOutputs);
             }
         }
         done = true;
