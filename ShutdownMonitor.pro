@@ -16,8 +16,14 @@ CONFIG += c++11
 }
 LIBS += -lXrandr -lX11
 
-DEFINES += SHUTDOWN_MONITOR_CONSOLE
-DEFINES += SHUTDOWN_MONITOR_SYSTRAY
+!equals(CONSOLE, no) {
+    message("Include command-line interface")
+    DEFINES += SHUTDOWN_MONITOR_CONSOLE
+}
+!equals(SYSTRAY, no) {
+    message("Include system tray interface")
+    DEFINES += SHUTDOWN_MONITOR_SYSTRAY
+}
 
 # The headers and source files:
 HEADERS +=  qrrcrtc.h \
