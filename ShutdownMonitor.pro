@@ -82,3 +82,25 @@ lrelease.CONFIG += no_link
 
 QMAKE_EXTRA_COMPILERS += lrelease
 POST_TARGETDEPS += compiler_lrelease_make_all
+
+defineReplace(getTranslationBinaries) {
+    ts_files = $$1
+    qm_files =
+    for (ts_file, $$ts_files) {
+        qm_files += ./$${DESTDIR}/$$replace(ts_file, ".ts", ".qm")
+    }
+    return($$qm_files)
+}
+
+# Installation
+unix {
+    isEmpty(PREFIX): PREFIX=$$(HOME)
+
+    target.path = $${PREFIX}/bin
+    INSTALLS += target
+
+    translations.path = $${PREFIX}/share/shutdownmonitor/translations/
+    translations.files = $$getTranslationBinaries(TRANSLATIONS)
+    translations.CONFIG += no_check_exist
+    INSTALLS += translations
+}
