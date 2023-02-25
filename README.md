@@ -1,6 +1,10 @@
 # REPOSITORY DESCRIPTION
 This repository contains a small program allowing to enable and disable the monitors from a system tray icon or the command-line.
 
+# :warning: WARNING
+ShutdownMonitor v1.0.0 uses directly the X11 backend, which seems to be incompatible with Plasma version 5.27.0 (and probably higher).
+In Plasma version 5.27.0 and higher use the "Display parameters" to enable or disable a screen.
+
 # FEATURES
 Here is a list of the current features of the program:
   - Enable or disable a monitor for the system tray in two clics
@@ -9,6 +13,8 @@ Here is a list of the current features of the program:
   - Light and dark themes
   
 # FUTURE DEVELOPMENTS
+Despite the intagration of screen enabling and disabling into Plasma, I may try to interface Shutdown monitor with KScreen, as the interface is much simpler than the current implementation with "Display configuration" applet in system tray and the "Display parameters" configuration panel.
+
 Here are some ideas I plan to implement later:
   - Identify monitors when showing the system tray icon context menu
   - Enable initially disabled monitors
