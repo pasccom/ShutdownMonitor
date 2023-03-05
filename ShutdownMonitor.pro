@@ -43,10 +43,14 @@ LIBS += -lXrandr -lX11
 }
 
 # The headers and source files:
-HEADERS +=  xrrcrtc.h \
+HEADERS +=  qscreenresources.h \
+            qoutput.h \
+            xrrcrtc.h \
             xrroutput.h \
             xrrscreenresources.h
 SOURCES +=  main.cpp \
+            qscreenresources.cpp \
+            qoutput.cpp \
             xrrcrtc.cpp \
             xrroutput.cpp \
             xrrscreenresources.cpp

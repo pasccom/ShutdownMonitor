@@ -1,4 +1,4 @@
-/* Copyright 2020 Pascal COMBES <pascom@orange.fr>
+/* Copyright 2023 Pascal COMBES <pascom@orange.fr>
  *
  * This file is part of ShutdownMonitor.
  *
@@ -16,44 +16,46 @@
  * along with ShutdownMonitor. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef XRROUTPUT_H
-#define XRROUTPUT_H
+#ifndef QOUTPUT_H
+#define QOUTPUT_H
 
-#include "qoutput.h"
 #include <QString>
 
-typedef unsigned long XID;
-typedef XID RROutput;
-typedef XID RRCrtc;
-typedef struct _XRROutputInfo XRROutputInfo;
-typedef unsigned short Connection;
-
-class XRandRScreenResources;
-class XRandRCrtc;
+class QScreenResources;
 
 /*!
- * \brief Internal representation for XrandR output
+ * \brief Internal representation for outputs
  *
  * Instances of this class represent an output (monitor, ...).
  */
-class XRandROutput : public QOutput
+class QOutput
 {
 public:
+    enum class Connection {
+        Unknown = -1,
+        Disconnected = 0,
+        Connected,
+    };
+
+    QString name;               /*!< The output name */
+    int physicalWidth;          /*!< The physical width of this output (in mm) */
+    int physicalHeight;         /*!< The physical height of this output (in mm) */
+    Connection connection;      /*!< The connection state of this output */
+
     /*!
-     * \brief Associated CRTC
+     * \brief Destructor
      *
-     * Returns the internal representation of the CRTC (Cathode Ray Tube controler)
-     * associated with this controller.
-     * \return The associated CRTC.
+     * This destructor does nothing. It is there to enable polymorphism.
      */
-    XRandRCrtc* crtc(void) const;
+    inline virtual ~QOutput(void) {}
+
     /*!
      * \brief User-friendly name of this output
      *
      * Returns a user-friendly name for the output.
      * \return A user-friendly name for the output.
      */
-    QString display(void) const;
+    virtual QString display(void) const {return name;}
 
     /*!
      * \brief Is enabled?
@@ -92,19 +94,18 @@ public:
      * \sa enable(), disable(), enabled()
      */
     bool toggle(bool grab = false);
-private:
+protected:
     /*!
      * \brief Constructor
      *
      * Initialize the class with the given information.
      * \param parent The parent screen resources.
-     * \param info The output information from XrandR.
      */
-    XRandROutput(XRandRScreenResources* parent, XRROutputInfo* info);
+    inline QOutput(QScreenResources *parent) :
+        mParent(parent), mEnabled(false) {}
 
-    RRCrtc mCrtcId;                 /*!< The id of the associated CRTC */
-
-    friend class XRandRScreenResources;
+    QScreenResources* mParent;    /*!< The parent screen resources */
+    bool mEnabled;                /*!< The enabled state for this output */
 };
 
-#endif // XRROUTPUT_H
+#endif // QOUTPUT_H

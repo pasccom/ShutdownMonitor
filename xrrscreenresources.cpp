@@ -31,7 +31,6 @@ XRandRScreenResources::XRandRScreenResources(Display *display, XRRScreenResource
 
 XRandRScreenResources::~XRandRScreenResources(void)
 {
-    qDeleteAll(mOutputs);
     qDeleteAll(mCrtcs);
 
     if (mResources != nullptr)
@@ -48,34 +47,6 @@ XRandRScreenResources* XRandRScreenResources::getCurrent(Display* display)
 {
     Window root = DefaultRootWindow(display);
     return new XRandRScreenResources(display, XRRGetScreenResourcesCurrent(display, root));
-}
-
-XRandROutput* XRandRScreenResources::output(RROutput outputId) const
-{
-    return mOutputs.value(outputId, nullptr);
-}
-
-XRandROutput* XRandRScreenResources::output(const QString& name) const
-{
-    foreach (RROutput outputId, outputs()) {
-        XRandROutput* output = mOutputs.value(outputId, nullptr);
-        if (output == nullptr)
-            continue;
-        if (output->connection != RR_Connected)
-            continue;
-        if (QString::compare(output->name, name, Qt::CaseSensitive) == 0)
-            return output;
-    }
-
-    return nullptr;
-}
-
-QList<RROutput> XRandRScreenResources::outputs(bool refresh)
-{
-    if (mOutputs.isEmpty() || refresh)
-        refreshOutputs();
-
-    return mOutputs.keys();
 }
 
 void XRandRScreenResources::refreshOutputs(void)
@@ -101,19 +72,24 @@ XRandRCrtc* XRandRScreenResources::crtc(RRCrtc crtcId)
     return mCrtcs.value(crtcId);
 }
 
-bool XRandRScreenResources::enableOutput(XRandROutput* output, bool grab)
+bool XRandRScreenResources::enableOutput(QOutput *output, bool grab)
 {
+    // Cast output to internal type:
+    XRandROutput* xOutput = dynamic_cast<XRandROutput*>(output);
+    if (xOutput == nullptr)
+        return false;
+
     // The output is already enabled:
-    if (output->mEnabled)
+    if (xOutput->mEnabled)
         return true;
     // The output CRTC should be in the CRTC map:
-    if (!mCrtcs.contains(output->mCrtcId))
+    if (!mCrtcs.contains(xOutput->mCrtcId))
         return false;
 
     // Update the CRTCs:
     bool ans = true;
-    bool oldOutputState = output->mEnabled;
-    output->mEnabled = true;
+    bool oldOutputState = xOutput->mEnabled;
+    xOutput->mEnabled = true;
     QRect totalScreen = computeTotalScreen();
     QRect newScreen = computeScreen();
     if (grab)
@@ -123,27 +99,32 @@ bool XRandRScreenResources::enableOutput(XRandROutput* output, bool grab)
     if (grab)
         XUngrabServer(mDisplay);
     if (!ans)
-        output->mEnabled = oldOutputState;
+        xOutput->mEnabled = oldOutputState;
     return ans;
 }
 
-bool XRandRScreenResources::disableOutput(XRandROutput* output, bool grab)
+bool XRandRScreenResources::disableOutput(QOutput *output, bool grab)
 {
+    // Cast output to internal type:
+    XRandROutput* xOutput = dynamic_cast<XRandROutput*>(output);
+    if (xOutput == nullptr)
+        return false;
+
     // The output is already disabled:
-    if (!output->mEnabled)
+    if (!xOutput->mEnabled)
         return true;
     // The output CRTC should be in the CRTC map:
-    if (!mCrtcs.contains(output->mCrtcId))
+    if (!mCrtcs.contains(xOutput->mCrtcId))
         return false;
 
     // Update the CRTCs:
     bool ans = true;
-    bool oldOutputState = output->mEnabled;
-    output->mEnabled = false;
+    bool oldOutputState = xOutput->mEnabled;
+    xOutput->mEnabled = false;
     QRect totalScreen = computeTotalScreen();
     QRect newScreen = computeScreen();
     if (newScreen.isNull()) {
-        output->mEnabled = true;
+        xOutput->mEnabled = true;
         return false;
     }
     if (grab)
@@ -153,17 +134,20 @@ bool XRandRScreenResources::disableOutput(XRandROutput* output, bool grab)
     if (grab)
         XUngrabServer(mDisplay);
     if (!ans)
-        output->mEnabled = oldOutputState;
+        xOutput->mEnabled = oldOutputState;
     return ans;
 }
 
 QRect XRandRScreenResources::computeTotalScreen(void) const
 {
     QRect screen;
-    foreach (XRandROutput* o, mOutputs) {
-        if (!mCrtcs.contains(o->mCrtcId))
+    foreach (QOutput* output, mOutputs) {
+        XRandROutput* xOutput = dynamic_cast<XRandROutput*>(output);
+        if (xOutput == nullptr)
             continue;
-        screen |= mCrtcs.value(o->mCrtcId)->rect();
+        if (!mCrtcs.contains(xOutput->mCrtcId))
+            continue;
+        screen |= mCrtcs.value(xOutput->mCrtcId)->rect();
     }
     return screen;
 }
@@ -171,11 +155,14 @@ QRect XRandRScreenResources::computeTotalScreen(void) const
 QRect XRandRScreenResources::computeScreen(void) const
 {
     QRect screen;
-    foreach (XRandROutput* o, mOutputs) {
-        if (!mCrtcs.contains(o->mCrtcId))
+    foreach (QOutput* output, mOutputs) {
+        XRandROutput* xOutput = dynamic_cast<XRandROutput*>(output);
+        if (xOutput == nullptr)
             continue;
-        if (o->mEnabled)
-            screen |= mCrtcs.value(o->mCrtcId)->rect();
+        if (!mCrtcs.contains(xOutput->mCrtcId))
+            continue;
+        if (xOutput->mEnabled)
+            screen |= mCrtcs.value(xOutput->mCrtcId)->rect();
     }
     return screen;
 }
@@ -188,7 +175,7 @@ bool XRandRScreenResources::updateCrtcOrigin(RRCrtc crtcId, const QPoint& newOri
     // Get the associated enabled outputs:
     QList<RROutput> crtcOutputs = crtc->outputs;
     for (auto it = crtcOutputs.begin(); it != crtcOutputs.end();) {
-        XRandROutput* o = output(*it);
+        XRandROutput* o = dynamic_cast<XRandROutput*>(output(*it));
         if ((o == nullptr) || !o->mEnabled)
             it = crtcOutputs.erase(it);
         else

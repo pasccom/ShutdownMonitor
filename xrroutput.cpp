@@ -25,20 +25,31 @@
 #include <X11/extensions/Xrandr.h>
 
 XRandROutput::XRandROutput(XRandRScreenResources *parent, XRROutputInfo *info)
-    : mParent(parent)
+    : QOutput(parent)
 {
     physicalWidth = info != nullptr ? info->mm_width : 0;
     physicalHeight = info != nullptr ? info->mm_height : 0;
     name = info != nullptr ? QString::fromLocal8Bit(QByteArray(info->name, info->nameLen)) : QString();
-    connection = info != nullptr ? info->connection : RR_UnknownConnection;
+    if (info == nullptr)
+        connection = QOutput::Connection::Unknown;
+    else if (info->connection == RR_Disconnected)
+        connection = QOutput::Connection::Disconnected;
+    else if (info->connection == RR_Connected)
+        connection = QOutput::Connection::Connected;
+    else
+        connection = QOutput::Connection::Unknown;
     mCrtcId = info != nullptr ? info->crtc : None;
 
-    mEnabled = info != nullptr ? mParent->crtc(info->crtc) != nullptr : false;
+    mEnabled = info != nullptr ? parent->crtc(info->crtc) != nullptr : false;
 }
 
 XRandRCrtc* XRandROutput::crtc(void) const
 {
-    return mCrtcId != None ? mParent->crtc(mCrtcId): nullptr;
+    XRandRScreenResources* parent = dynamic_cast<XRandRScreenResources*>(mParent);
+    if (parent == nullptr)
+        return nullptr;
+
+    return mCrtcId != None ? parent->crtc(mCrtcId): nullptr;
 }
 
 QString XRandROutput::display(void) const
