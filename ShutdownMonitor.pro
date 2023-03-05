@@ -25,14 +25,9 @@ TEMPLATE = app              # Make an executable
 
 QT += x11extras
 QT += widgets
-CONFIG += c++11
+CONFIG += c++17
 
-# Additional libs:
-!unix {
-    error("This program can only be compiled under unix, as it uses XrandR library")
-}
-LIBS += -lXrandr -lX11
-
+# The user interface:
 !equals(CONSOLE, no) {
     message("Include command-line interface")
     DEFINES += SHUTDOWN_MONITOR_CONSOLE
@@ -44,16 +39,43 @@ LIBS += -lXrandr -lX11
 
 # The headers and source files:
 HEADERS +=  qscreenresources.h \
-            qoutput.h \
-            xrrcrtc.h \
-            xrroutput.h \
-            xrrscreenresources.h
+            qoutput.h
 SOURCES +=  main.cpp \
             qscreenresources.cpp \
-            qoutput.cpp \
-            xrrcrtc.cpp \
-            xrroutput.cpp \
-            xrrscreenresources.cpp
+            qoutput.cpp
+
+# The backends:
+BACKENDS=
+!unix {
+    error("This program can only be compiled under unix, as it uses XrandR or KScreen APIs")
+}
+!equals(X11, no) {
+    message("Include X11 backend")
+    BACKENDS += X11
+    LIBS += -lXrandr -lX11
+    DEFINES += SHUTDOWN_MONITOR_X11
+
+    HEADERS +=  xrrscreenresources.h \
+                xrroutput.h \
+                xrrcrtc.h
+    SOURCES +=  xrrscreenresources.cpp \
+                xrroutput.cpp \
+                xrrcrtc.cpp
+}
+!equals(KSCREEN, no) {
+    message("Include KScreen backend")
+    BACKENDS += KScreen
+    QT += KScreen
+    DEFINES += SHUTDOWN_MONITOR_KSCREEN
+
+    HEADERS +=  kscreenresources.h \
+                kscreenoutput.h
+    SOURCES +=  kscreenresources.cpp \
+                kscreenoutput.cpp
+}
+isEmpty(BACKENDS) {
+    error("All backends have been disabled")
+}
 
 # The resources:
 contains(DEFINES, SHUTDOWN_MONITOR_SYSTRAY): RESOURCES += shutdownmonitor.qrc
