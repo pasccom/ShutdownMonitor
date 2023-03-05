@@ -16,8 +16,8 @@
  * along with ShutdownMonitor. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef QRRSCREENRESOURCES_H
-#define QRRSCREENRESOURCES_H
+#ifndef XRRSCREENRESOURCES_H
+#define XRRSCREENRESOURCES_H
 
 #include <QMap>
 
@@ -183,4 +183,4 @@ private:
     QMap<RRCrtc, QRRCrtc*> mCrtcs;      /*!< The map of CRTC internal representations */
 };
 
-#endif // QRRSCREENRESOURCES_H
+#endif // XRRSCREENRESOURCES_H

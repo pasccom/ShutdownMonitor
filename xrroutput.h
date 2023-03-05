@@ -16,8 +16,8 @@
  * along with ShutdownMonitor. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef QRROUTPUT_H
-#define QRROUTPUT_H
+#ifndef XRROUTPUT_H
+#define XRROUTPUT_H
 
 #include <QString>
 
@@ -113,4 +113,4 @@ private:
     friend class QRRScreenResources;
 };
 
-#endif // QRROUTPUT_H
+#endif // XRROUTPUT_H

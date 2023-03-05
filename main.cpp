@@ -16,9 +16,8 @@
  * along with ShutdownMonitor. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "qrrscreenresources.h"
-#include "qrroutput.h"
-#include "qrrcrtc.h"
+#include "xrrscreenresources.h"
+#include "xrroutput.h"
 
 #include <QX11Info>
 #include <QMenu>

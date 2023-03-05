@@ -16,7 +16,7 @@
  * along with ShutdownMonitor. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "qrrcrtc.h"
+#include "xrrcrtc.h"
 
 #include <QtDebug>
 

@@ -16,8 +16,8 @@
  * along with ShutdownMonitor. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef QRRCRTC_H
-#define QRRCRTC_H
+#ifndef XRRCRTC_H
+#define XRRCRTC_H
 
 #include <QString>
 #include <QList>
@@ -78,4 +78,4 @@ private:
     friend class QRRScreenResources;
 };
 
-#endif // QRRCRTC_H
+#endif // XRRCRTC_H
