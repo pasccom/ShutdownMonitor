@@ -22,7 +22,7 @@
 
 #include "X11/extensions/Xrandr.h"
 
-QRRCrtc::QRRCrtc(QRRScreenResources *parent, XRRCrtcInfo *info)
+XRandRCrtc::XRandRCrtc(XRandRScreenResources *parent, XRRCrtcInfo *info)
     : mParent(parent)
 {
     x = info != nullptr ? info->x : 0;
@@ -37,7 +37,7 @@ QRRCrtc::QRRCrtc(QRRScreenResources *parent, XRRCrtcInfo *info)
         outputs.append(info->outputs[o]);
 }
 
-QString QRRCrtc::display(void) const
+QString XRandRCrtc::display(void) const
 {
     return QString("%1x%2+%3+%4").arg(width)
                                  .arg(height)

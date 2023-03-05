@@ -25,11 +25,11 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
 
-QRRScreenResources::QRRScreenResources(Display *display, XRRScreenResources *resources)
+XRandRScreenResources::XRandRScreenResources(Display *display, XRRScreenResources *resources)
     : mDisplay(display), mResources(resources)
 {}
 
-QRRScreenResources::~QRRScreenResources(void)
+XRandRScreenResources::~XRandRScreenResources(void)
 {
     qDeleteAll(mOutputs);
     qDeleteAll(mCrtcs);
@@ -38,27 +38,27 @@ QRRScreenResources::~QRRScreenResources(void)
         XRRFreeScreenResources(mResources);
 }
 
-QRRScreenResources* QRRScreenResources::get(Display* display)
+XRandRScreenResources* XRandRScreenResources::get(Display* display)
 {
     Window root = DefaultRootWindow(display);
-    return new QRRScreenResources(display, XRRGetScreenResources(display, root));
+    return new XRandRScreenResources(display, XRRGetScreenResources(display, root));
 }
 
-QRRScreenResources* QRRScreenResources::getCurrent(Display* display)
+XRandRScreenResources* XRandRScreenResources::getCurrent(Display* display)
 {
     Window root = DefaultRootWindow(display);
-    return new QRRScreenResources(display, XRRGetScreenResourcesCurrent(display, root));
+    return new XRandRScreenResources(display, XRRGetScreenResourcesCurrent(display, root));
 }
 
-QRROutput* QRRScreenResources::output(RROutput outputId) const
+XRandROutput* XRandRScreenResources::output(RROutput outputId) const
 {
     return mOutputs.value(outputId, nullptr);
 }
 
-QRROutput* QRRScreenResources::output(const QString& name) const
+XRandROutput* XRandRScreenResources::output(const QString& name) const
 {
     foreach (RROutput outputId, outputs()) {
-        QRROutput* output = mOutputs.value(outputId, nullptr);
+        XRandROutput* output = mOutputs.value(outputId, nullptr);
         if (output == nullptr)
             continue;
         if (output->connection != RR_Connected)
@@ -70,7 +70,7 @@ QRROutput* QRRScreenResources::output(const QString& name) const
     return nullptr;
 }
 
-QList<RROutput> QRRScreenResources::outputs(bool refresh)
+QList<RROutput> XRandRScreenResources::outputs(bool refresh)
 {
     if (mOutputs.isEmpty() || refresh)
         refreshOutputs();
@@ -78,30 +78,30 @@ QList<RROutput> QRRScreenResources::outputs(bool refresh)
     return mOutputs.keys();
 }
 
-void QRRScreenResources::refreshOutputs(void)
+void XRandRScreenResources::refreshOutputs(void)
 {
     qDeleteAll(mOutputs);
 
     for (int o = 0; o < mResources->noutput; o++) {
         XRROutputInfo* info = XRRGetOutputInfo(mDisplay, mResources, mResources->outputs[o]);
-        mOutputs.insert(mResources->outputs[o], new QRROutput(this, info));
+        mOutputs.insert(mResources->outputs[o], new XRandROutput(this, info));
         XRRFreeOutputInfo(info);
     }
 }
 
-QRRCrtc* QRRScreenResources::crtc(RRCrtc crtcId)
+XRandRCrtc* XRandRScreenResources::crtc(RRCrtc crtcId)
 {
     if (crtcId == None)
         return nullptr;
     if (!mCrtcs.contains(crtcId)) {
         XRRCrtcInfo* info = XRRGetCrtcInfo(mDisplay, mResources, crtcId);
-        mCrtcs.insert(crtcId, new QRRCrtc(this, info));
+        mCrtcs.insert(crtcId, new XRandRCrtc(this, info));
         XRRFreeCrtcInfo(info);
     }
     return mCrtcs.value(crtcId);
 }
 
-bool QRRScreenResources::enableOutput(QRROutput* output, bool grab)
+bool XRandRScreenResources::enableOutput(XRandROutput* output, bool grab)
 {
     // The output is already enabled:
     if (output->mEnabled)
@@ -127,7 +127,7 @@ bool QRRScreenResources::enableOutput(QRROutput* output, bool grab)
     return ans;
 }
 
-bool QRRScreenResources::disableOutput(QRROutput* output, bool grab)
+bool XRandRScreenResources::disableOutput(XRandROutput* output, bool grab)
 {
     // The output is already disabled:
     if (!output->mEnabled)
@@ -157,10 +157,10 @@ bool QRRScreenResources::disableOutput(QRROutput* output, bool grab)
     return ans;
 }
 
-QRect QRRScreenResources::computeTotalScreen(void) const
+QRect XRandRScreenResources::computeTotalScreen(void) const
 {
     QRect screen;
-    foreach (QRROutput* o, mOutputs) {
+    foreach (XRandROutput* o, mOutputs) {
         if (!mCrtcs.contains(o->mCrtcId))
             continue;
         screen |= mCrtcs.value(o->mCrtcId)->rect();
@@ -168,10 +168,10 @@ QRect QRRScreenResources::computeTotalScreen(void) const
     return screen;
 }
 
-QRect QRRScreenResources::computeScreen(void) const
+QRect XRandRScreenResources::computeScreen(void) const
 {
     QRect screen;
-    foreach (QRROutput* o, mOutputs) {
+    foreach (XRandROutput* o, mOutputs) {
         if (!mCrtcs.contains(o->mCrtcId))
             continue;
         if (o->mEnabled)
@@ -180,15 +180,15 @@ QRect QRRScreenResources::computeScreen(void) const
     return screen;
 }
 
-bool QRRScreenResources::updateCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin)
+bool XRandRScreenResources::updateCrtcOrigin(RRCrtc crtcId, const QPoint& newOrigin)
 {
     // Get the CRTC internal representation:
-    QRRCrtc* crtc = mCrtcs.value(crtcId);
+    XRandRCrtc* crtc = mCrtcs.value(crtcId);
 
     // Get the associated enabled outputs:
     QList<RROutput> crtcOutputs = crtc->outputs;
     for (auto it = crtcOutputs.begin(); it != crtcOutputs.end();) {
-        QRROutput* o = output(*it);
+        XRandROutput* o = output(*it);
         if ((o == nullptr) || !o->mEnabled)
             it = crtcOutputs.erase(it);
         else

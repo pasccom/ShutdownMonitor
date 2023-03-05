@@ -71,12 +71,12 @@
  * | \c -l | \c --list-outputs  |             | List outputs and quit.                                         |
  */
 #ifdef SHUTDOWN_MONITOR_CONSOLE
-QStringList toggleOutputs(QRRScreenResources* resources, QStringList& outputs)
+QStringList toggleOutputs(XRandRScreenResources* resources, QStringList& outputs)
 {
     QStringList toggledOutputs;
 
     foreach (RROutput outputId, resources->outputs()) {
-        QRROutput* output = resources->output(outputId);
+        XRandROutput* output = resources->output(outputId);
         if (output == nullptr)
             continue;
         if (output->connection != RR_Connected)
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
     parser.process(app);
 
     // Load screen resources:
-    QRRScreenResources* resources = QRRScreenResources::getCurrent(QX11Info::display());
+    XRandRScreenResources* resources = XRandRScreenResources::getCurrent(QX11Info::display());
 #ifdef SHUTDOWN_MONITOR_SYSTRAY
     bool done = false;
 #else // SHUTDOWN_MONITOR_SYSTRAY
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
     // List outputs:
     if (parser.isSet("list-outputs")) {
         foreach (RROutput outputId, resources->outputs()) {
-            QRROutput* output = resources->output(outputId);
+            XRandROutput* output = resources->output(outputId);
             if (output == nullptr)
                 continue;
             if (output->connection != RR_Connected)
@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
     QIcon  enabledMonitorIcon(QString(":/icons/%1/enabled-monitor.png").arg(parser.value("theme")));
     QIcon disabledMonitorIcon(QString(":/icons/%1/disabled-monitor.png").arg(parser.value("theme")));
     foreach (RROutput outputId, resources->outputs()) {
-        QRROutput* output = resources->output(outputId);
+        XRandROutput* output = resources->output(outputId);
         if (output == nullptr)
             continue;
         if (output->connection != RR_Connected)
@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
         action->setIcon(output->enabled() ? enabledMonitorIcon : disabledMonitorIcon);
         action->setData(QVariant::fromValue<RROutput>(outputId));
         QObject::connect(action, &QAction::triggered, [resources, action, &enabledMonitorIcon, &disabledMonitorIcon] {
-            QRROutput* output = resources->output(action->data().value<RROutput>());
+            XRandROutput* output = resources->output(action->data().value<RROutput>());
             output->toggle();
             action->setIcon(output->enabled() ? enabledMonitorIcon : disabledMonitorIcon);
         });
@@ -256,7 +256,7 @@ int main(int argc, char *argv[])
             foreach (QAction* action, menu.actions()) {
                 if (action->data().isNull())
                     continue;
-                QRROutput* output = resources->output(action->data().value<RROutput>());
+                XRandROutput* output = resources->output(action->data().value<RROutput>());
                 action->setIcon(output->enabled() ? enabledMonitorIcon : disabledMonitorIcon);
             }
         });
@@ -273,7 +273,7 @@ int main(int argc, char *argv[])
     // Ensure that the screen resources are deallocated before quitting the application:
     QObject::connect(&app, &QApplication::aboutToQuit, [resources] {
         foreach (RROutput outputId, resources->outputs()) {
-            QRROutput* output = resources->output(outputId);
+            XRandROutput* output = resources->output(outputId);
             output->enable();
         }
         qDebug() << "Delete screen resources";

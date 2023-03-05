@@ -29,7 +29,7 @@ typedef XID RRMode;
 typedef XID RROutput;
 typedef struct _XRRCrtcInfo XRRCrtcInfo;
 
-class QRRScreenResources;
+class XRandRScreenResources;
 
 /*!
  * \brief Internal representation for XrandR CRTC
@@ -37,7 +37,7 @@ class QRRScreenResources;
  * Instances of this class represent a CRTC (Cathode Ray Tube Controller).
  * In particular, they give the position of the CRTC buffer in the screen.
  */
-class QRRCrtc
+class XRandRCrtc
 {
 public:
     int x;                      /*!< The x coordinate of the top left point of the CRTC on the screen */
@@ -71,11 +71,11 @@ private:
      * \param parent The parent screen resources.
      * \param info The CRTC information from XrandR.
      */
-    QRRCrtc(QRRScreenResources* parent, XRRCrtcInfo* info);
+    XRandRCrtc(XRandRScreenResources* parent, XRRCrtcInfo* info);
 
-    QRRScreenResources* mParent;   /*!< The parent screen resources */
+    XRandRScreenResources* mParent;   /*!< The parent screen resources */
 
-    friend class QRRScreenResources;
+    friend class XRandRScreenResources;
 };
 
 #endif // XRRCRTC_H

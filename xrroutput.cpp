@@ -24,7 +24,7 @@
 
 #include <X11/extensions/Xrandr.h>
 
-QRROutput::QRROutput(QRRScreenResources *parent, XRROutputInfo *info)
+XRandROutput::XRandROutput(XRandRScreenResources *parent, XRROutputInfo *info)
     : mParent(parent)
 {
     physicalWidth = info != nullptr ? info->mm_width : 0;
@@ -36,12 +36,12 @@ QRROutput::QRROutput(QRRScreenResources *parent, XRROutputInfo *info)
     mEnabled = info != nullptr ? mParent->crtc(info->crtc) != nullptr : false;
 }
 
-QRRCrtc* QRROutput::crtc(void) const
+XRandRCrtc* XRandROutput::crtc(void) const
 {
     return mCrtcId != None ? mParent->crtc(mCrtcId): nullptr;
 }
 
-QString QRROutput::display(void) const
+QString XRandROutput::display(void) const
 {
     if (name.isNull() || (crtc() == nullptr))
         return name;
@@ -50,17 +50,17 @@ QString QRROutput::display(void) const
                              .arg(crtc()->display());
 }
 
-bool QRROutput::enable(bool grab)
+bool XRandROutput::enable(bool grab)
 {
     return mParent->enableOutput(this, grab);
 }
 
-bool QRROutput::disable(bool grab)
+bool XRandROutput::disable(bool grab)
 {
     return mParent->disableOutput(this, grab);
 }
 
-bool QRROutput::toggle(bool grab)
+bool XRandROutput::toggle(bool grab)
 {
     if (mEnabled)
         return mParent->disableOutput(this, grab);

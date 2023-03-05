@@ -27,8 +27,8 @@ typedef XID RROutput;
 typedef struct _XDisplay Display;
 typedef struct _XRRScreenResources XRRScreenResources;
 
-class QRROutput;
-class QRRCrtc;
+class XRandROutput;
+class XRandRCrtc;
 class QPoint;
 class QRect;
 
@@ -38,7 +38,7 @@ class QRect;
  * This class holds the internal representation for XRandR screen resources.
  * It also allows to enable and disable the outputs.
  */
-class QRRScreenResources
+class XRandRScreenResources
 {
 public:
     /*!
@@ -49,7 +49,7 @@ public:
      * \return The screen resources to the given display.
      * \sa getCurrent()
      */
-    static QRRScreenResources* get(Display *display);
+    static XRandRScreenResources* get(Display *display);
     /*!
      * \brief Retrieve XRandR screen resources
      *
@@ -58,14 +58,14 @@ public:
      * \return The screen resources to the given display.
      * \sa get()
      */
-    static QRRScreenResources* getCurrent(Display *display);
+    static XRandRScreenResources* getCurrent(Display *display);
 
     /*!
      * \brief Destructor
      *
      * Desallocates the internal data and releases the resources.
      */
-    ~QRRScreenResources(void);
+    ~XRandRScreenResources(void);
 
     /*!
      * \brief Get all outputs
@@ -94,7 +94,7 @@ public:
      * \param outputId The desired output identifier.
      * \return The output internal representation corresponding to the given identifier.
      */
-    QRROutput* output(RROutput outputId) const;
+    XRandROutput* output(RROutput outputId) const;
     /*!
      * \brief Get an output by its name
      *
@@ -102,7 +102,7 @@ public:
      * \param name The desired output name.
      * \return The output internal representation corresponding to the given name.
      */
-    QRROutput* output(const QString& name) const;
+    XRandROutput* output(const QString& name) const;
     /*!
      * \brief Get a CRTC
      *
@@ -110,7 +110,7 @@ public:
      * \param crtcId The desired CRTC identifier.
      * \return The CRTC internal representation corresponding to the given identifier.
      */
-    QRRCrtc* crtc(RRCrtc crtcId);
+    XRandRCrtc* crtc(RRCrtc crtcId);
 
     /*!
      * \brief Enable the given output
@@ -121,7 +121,7 @@ public:
      * \return Whether this output was successfully enabled.
      * \sa disableOutput()
      */
-    bool enableOutput(QRROutput* output, bool grab = false);
+    bool enableOutput(XRandROutput* output, bool grab = false);
     /*!
      * \brief Disable the given output
      *
@@ -131,7 +131,7 @@ public:
      * \return Whether this output was successfully disabled.
      * \sa enableOutput()
      */
-    bool disableOutput(QRROutput* output, bool grab = false);
+    bool disableOutput(XRandROutput* output, bool grab = false);
 private:
     /*!
      * \brief Constructor
@@ -141,7 +141,7 @@ private:
      * \param resources The screen resources from XRandR.
      * \sa get(), getCurrent()
      */
-    QRRScreenResources(Display* display, XRRScreenResources* resources);
+    XRandRScreenResources(Display* display, XRRScreenResources* resources);
 
     /*!
      * \brief Refresh the cached output list
@@ -179,8 +179,8 @@ private:
 
     Display* mDisplay;                  /*!< The associated X display */
     XRRScreenResources* mResources;    /*!< The associated screen resources */
-    QMap<RROutput, QRROutput*> mOutputs;         /*!< The list of output internal representations */
-    QMap<RRCrtc, QRRCrtc*> mCrtcs;      /*!< The map of CRTC internal representations */
+    QMap<RROutput, XRandROutput*> mOutputs;         /*!< The list of output internal representations */
+    QMap<RRCrtc, XRandRCrtc*> mCrtcs;      /*!< The map of CRTC internal representations */
 };
 
 #endif // XRRSCREENRESOURCES_H

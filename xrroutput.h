@@ -27,15 +27,15 @@ typedef XID RRCrtc;
 typedef struct _XRROutputInfo XRROutputInfo;
 typedef unsigned short Connection;
 
-class QRRScreenResources;
-class QRRCrtc;
+class XRandRScreenResources;
+class XRandRCrtc;
 
 /*!
  * \brief Internal representation for XrandR output
  *
  * Instances of this class represent an output (monitor, ...).
  */
-class QRROutput
+class XRandROutput
 {
 public:
     QString name;               /*!< The output name */
@@ -50,7 +50,7 @@ public:
      * associated with this controller.
      * \return The associated CRTC.
      */
-    QRRCrtc* crtc(void) const;
+    XRandRCrtc* crtc(void) const;
     /*!
      * \brief User-friendly name of this output
      *
@@ -104,13 +104,13 @@ private:
      * \param parent The parent screen resources.
      * \param info The output information from XrandR.
      */
-    QRROutput(QRRScreenResources* parent, XRROutputInfo* info);
+    XRandROutput(XRandRScreenResources* parent, XRROutputInfo* info);
 
-    QRRScreenResources* mParent;    /*!< The parent screen resources */
+    XRandRScreenResources* mParent;    /*!< The parent screen resources */
     RRCrtc mCrtcId;                 /*!< The id of the associated CRTC */
     bool mEnabled;                  /*!< The enabled state for this output */
 
-    friend class QRRScreenResources;
+    friend class XRandRScreenResources;
 };
 
 #endif // XRROUTPUT_H
