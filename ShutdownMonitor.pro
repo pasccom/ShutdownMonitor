@@ -88,7 +88,7 @@ BACKEND_INCLUDES=$$join(BACKEND_INCLUDES, "\"$${NL}$${LITERAL_HASH}include \"", 
 
 BACKEND_INSERT_LINES=
 for(B, BACKEND_INSERT) {
-    BACKEND_INSERT_LINES+="    availableBackends.insert($${B}::name, &$${B}::create);"
+    BACKEND_INSERT_LINES+="    availableBackends.append(qMakePair($${B}::name, &$${B}::create));"
 }
 BACKEND_INSERT=$$join(BACKEND_INSERT_LINES, "$${NL}")
 

@@ -134,12 +134,12 @@ protected:
 
     QMap<QOutputId, QOutput*> mOutputs; /*!< The list of output internal representations */
 private:
-    /*! The map of available backends */
-    static QMap< QString, std::function<QScreenResources*(const QString&)> > availableBackends;
+    /*! The list of available backends */
+    static QList< QPair< QString, std::function<QScreenResources*(const QString&)> > > availableBackends;
     /*!
      * \brief Initialize available backends.
      *
-     * This function is in charge of initializing the map of available backends.
+     * This function is in charge of initializing the list of available backends.
      */
     static void initBackends(void);
 };

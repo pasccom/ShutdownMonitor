@@ -19,7 +19,7 @@
 #include "qscreenresources.h"
 #include "qoutput.h"
 
-QMap< QString, std::function<QScreenResources*(const QString&)> > QScreenResources::availableBackends;
+QList< QPair< QString, std::function<QScreenResources*(const QString&)> > > QScreenResources::availableBackends;
 
 QStringList QScreenResources::listBackends(void)
 {
@@ -28,8 +28,8 @@ QStringList QScreenResources::listBackends(void)
     if (availableBackends.isEmpty())
         initBackends();
 
-    foreach (QString name, availableBackends.keys())
-        ret.append(name);
+    foreach (auto b, availableBackends)
+        ret.append(b.first);
     return ret;
 }
 
@@ -38,9 +38,8 @@ QScreenResources* QScreenResources::create(const QString& backend)
     if (availableBackends.isEmpty())
         initBackends();
 
-    foreach (QString name, availableBackends.keys()) {
-        auto factory = availableBackends.value(name);
-        QScreenResources* ans = factory(backend);
+    foreach (auto b, availableBackends) {
+        QScreenResources* ans = b.second(backend);
         if (ans != nullptr)
             return ans;
     }
