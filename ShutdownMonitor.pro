@@ -42,7 +42,8 @@ HEADERS +=  qscreenresources.h \
             qoutput.h
 SOURCES +=  main.cpp \
             qscreenresources.cpp \
-            qoutput.cpp
+            qoutput.cpp \
+            qscreenresourcesfactory.cpp
 
 # The backends:
 BACKENDS=

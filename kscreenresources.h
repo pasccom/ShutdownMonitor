@@ -31,6 +31,17 @@
 class KScreenResources : public QScreenResources
 {
 public:
+    static QString name;    /*!< Backend name */
+    /*!
+     * \brief Screen resources factory
+     *
+     * This method creates a new screen resource instance,
+     * if the backend matches.
+     * \param backend Selected backend.
+     * \return A new screen resources instance if the backend matches,
+     * otherwise, \c nullptr.
+     */
+    static QScreenResources* create(const QString& backend);
     /*!
      * \brief Retrieve KScreen current configuration
      *
@@ -78,12 +89,10 @@ private:
      * \brief Constructor
      *
      * Initialize the class with the given information.
-     * \param display The X display.
-     * \param resources The screen resources from XRandR.
-     * \sa get(), getCurrent()
+     * \param config A KScreen configuration.
+     * \sa getCurrent()
      */
-    inline KScreenResources(const KScreen::ConfigPtr& config)
-        : mConfig(config) {}
+    KScreenResources(const KScreen::ConfigPtr& config);
 
     /*!
      * \brief Compute total screen

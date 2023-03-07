@@ -34,6 +34,24 @@ class QOutput;
 class QScreenResources
 {
 public:
+    QString name;   /*!< Name of the backend */
+
+    /*!
+     * \brief List available backends
+     *
+     * This function lists the available backends.
+     * \return The list of the available backend names.
+     */
+    static QStringList listBackends(void);
+    /*!
+     * \brief Creates screen resources
+     *
+     * This function creates a new screen resources instance,
+     * using the given backend, if any, or the prefered backend.
+     * \param backend The name of the preferred backend
+     * \return A new screen resource instance.
+     */
+    static QScreenResources* create(const QString& backend);
     /*!
      * \brief Destructor
      *
@@ -99,13 +117,31 @@ public:
     virtual bool disableOutput(QOutput* output, bool grab = false) = 0;
 protected:
     /*!
+     * \brief Constructor
+     *
+     * Initialize the class with the given backend name.
+     * \param name The backend name.
+     * \sa create()
+     */
+    inline QScreenResources(const QString& name) :
+        name(name) {}
+    /*!
      * \brief Refresh the cached output list
      *
      * Refresh the QList of output internal representations.
      */
     virtual void refreshOutputs(void) = 0;
 
-    QMap<QOutputId, QOutput*> mOutputs;         /*!< The list of output internal representations */
+    QMap<QOutputId, QOutput*> mOutputs; /*!< The list of output internal representations */
+private:
+    /*! The map of available backends */
+    static QMap< QString, std::function<QScreenResources*(const QString&)> > availableBackends;
+    /*!
+     * \brief Initialize available backends.
+     *
+     * This function is in charge of initializing the map of available backends.
+     */
+    static void initBackends(void);
 };
 
 #endif // QSCREENRESOURCES_H

@@ -42,6 +42,17 @@ class QRect;
 class XRandRScreenResources : public QScreenResources
 {
 public:
+    static QString name;    /*!< Backend name */
+    /*!
+     * \brief Screen resources factory
+     *
+     * This method creates a new screen resource instance,
+     * if the backend matches.
+     * \param backend Selected backend.
+     * \return A new screen resources instance if the backend matches,
+     * otherwise, \c nullptr.
+     */
+    static QScreenResources* create(const QString& backend);
     /*!
      * \brief Retrieve XRandR screen resources
      *

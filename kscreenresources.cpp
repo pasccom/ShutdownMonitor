@@ -24,6 +24,16 @@
 #include <KScreen/GetConfigOperation>
 #include <KScreen/SetConfigOperation>
 
+QString KScreenResources::name = "KScreen";
+
+QScreenResources* KScreenResources::create(const QString& backend)
+{
+    if (backend.isEmpty() || (QString::compare(backend, KScreenResources::name, Qt::CaseInsensitive) == 0))
+        return KScreenResources::getCurrent();
+
+    return nullptr;
+}
+
 KScreenResources *KScreenResources::getCurrent()
 {
     KScreen::GetConfigOperation opCurrent(KScreen::ConfigOperation::NoOptions);
@@ -34,6 +44,10 @@ KScreenResources *KScreenResources::getCurrent()
         return new KScreenResources(opCurrent.config());
     }
 }
+
+KScreenResources::KScreenResources(const KScreen::ConfigPtr& config)
+    : QScreenResources(KScreenResources::name), mConfig(config)
+{}
 
 void KScreenResources::refreshOutputs(void)
 {

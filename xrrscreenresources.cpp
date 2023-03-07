@@ -22,19 +22,25 @@
 
 #include <QtDebug>
 
+#include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
 
-XRandRScreenResources::XRandRScreenResources(Display *display, XRRScreenResources *resources)
-    : mDisplay(display), mResources(resources)
-{}
+QString XRandRScreenResources::name = "X11";
 
-XRandRScreenResources::~XRandRScreenResources(void)
+QScreenResources* XRandRScreenResources::create(const QString& backend)
 {
-    qDeleteAll(mCrtcs);
+    if (backend.isEmpty() && QX11Info::isPlatformX11())
+        return XRandRScreenResources::getCurrent(QX11Info::display());
 
-    if (mResources != nullptr)
-        XRRFreeScreenResources(mResources);
+    if (QString::compare(backend, XRandRScreenResources::name, Qt::CaseInsensitive) == 0) {
+        if (QX11Info::isPlatformX11())
+            return XRandRScreenResources::getCurrent(QX11Info::display());
+        qWarning() << QObject::tr("This backend only supports X11");
+        return nullptr;
+    }
+
+    return nullptr;
 }
 
 XRandRScreenResources* XRandRScreenResources::get(Display* display)
@@ -47,6 +53,18 @@ XRandRScreenResources* XRandRScreenResources::getCurrent(Display* display)
 {
     Window root = DefaultRootWindow(display);
     return new XRandRScreenResources(display, XRRGetScreenResourcesCurrent(display, root));
+}
+
+XRandRScreenResources::XRandRScreenResources(Display *display, XRRScreenResources *resources)
+    : QScreenResources(XRandRScreenResources::name), mDisplay(display), mResources(resources)
+{}
+
+XRandRScreenResources::~XRandRScreenResources(void)
+{
+    qDeleteAll(mCrtcs);
+
+    if (mResources != nullptr)
+        XRRFreeScreenResources(mResources);
 }
 
 void XRandRScreenResources::refreshOutputs(void)

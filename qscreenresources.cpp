@@ -19,7 +19,33 @@
 #include "qscreenresources.h"
 #include "qoutput.h"
 
-#include <QtDebug>
+QMap< QString, std::function<QScreenResources*(const QString&)> > QScreenResources::availableBackends;
+
+QStringList QScreenResources::listBackends(void)
+{
+    QStringList ret;
+
+    if (availableBackends.isEmpty())
+        initBackends();
+
+    foreach (QString name, availableBackends.keys())
+        ret.append(name);
+    return ret;
+}
+
+QScreenResources* QScreenResources::create(const QString& backend)
+{
+    if (availableBackends.isEmpty())
+        initBackends();
+
+    foreach (QString name, availableBackends.keys()) {
+        auto factory = availableBackends.value(name);
+        QScreenResources* ans = factory(backend);
+        if (ans != nullptr)
+            return ans;
+    }
+    return nullptr;
+}
 
 QScreenResources::~QScreenResources(void)
 {

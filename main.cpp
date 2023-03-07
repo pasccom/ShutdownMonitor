@@ -17,10 +17,8 @@
  */
 
 #include "qscreenresources.h"
-#include "xrrscreenresources.h"
 #include "qoutput.h"
 
-#include <QX11Info>
 #include <QMenu>
 #include <QSystemTrayIcon>
 #include <QTranslator>
@@ -113,17 +111,13 @@ int main(int argc, char *argv[])
     if (!app.installTranslator(&translator))
         qWarning() << "Could not install translator";
 
-    // Check that we are under X11:
-    if (!QX11Info::isPlatformX11()) {
-        qWarning() << QObject::tr("This program only supports X11");
-        return -1;
-    }
-
     // Setup command line arguments parser:
     QCommandLineParser parser;
     parser.addVersionOption();
     parser.addHelpOption();
     parser.setApplicationDescription(QObject::tr("Enable and disable the monitors from the system tray or the command line."));
+    parser.addOption(QCommandLineOption("list-backends", QObject::tr("List backends and quit.")));
+    parser.addOption(QCommandLineOption("backend", QObject::tr("The backend to be used to manage the screen."), QObject::tr("backend"), QString()));
 #ifdef SHUTDOWN_MONITOR_SYSTRAY
     parser.addOption(QCommandLineOption("theme", QObject::tr("The theme to use for the icons. It can be 'light' or 'dark'."), QObject::tr("theme"), "light"));
 #endif // SHUTDOWN_MONITOR_SYSTRAY
@@ -136,8 +130,22 @@ int main(int argc, char *argv[])
 #endif // SHUTDOWN_MONITOR_CONSOLE
     parser.process(app);
 
+    // List backends:
+    if (parser.isSet("list-backends")) {
+        std::cout << "Available backends:" << std::endl;
+        foreach (QString backend, QScreenResources::listBackends())
+            std::cout << "  - " << qPrintable(backend) << std::endl;
+        return 0;
+    }
+
     // Load screen resources:
-    QScreenResources* resources = XRandRScreenResources::getCurrent(QX11Info::display());
+    QScreenResources* resources = QScreenResources::create(parser.value("backend"));
+    if (resources == nullptr) {
+        qWarning() << "No supported backend available";
+        return -1;
+    }
+    std::cout << "Using backend: " << qPrintable(resources->name) << std::endl;
+
 #ifdef SHUTDOWN_MONITOR_SYSTRAY
     bool done = false;
 #else // SHUTDOWN_MONITOR_SYSTRAY
@@ -147,7 +155,7 @@ int main(int argc, char *argv[])
 #ifdef SHUTDOWN_MONITOR_CONSOLE
     // List outputs:
     if (parser.isSet("list-outputs")) {
-        foreach (RROutput outputId, resources->outputs()) {
+        foreach (QOutputId outputId, resources->outputs()) {
             QOutput* output = resources->output(outputId);
             if (output == nullptr)
                 continue;
@@ -216,7 +224,7 @@ int main(int argc, char *argv[])
     QMenu menu;
     QIcon  enabledMonitorIcon(QString(":/icons/%1/enabled-monitor.png").arg(parser.value("theme")));
     QIcon disabledMonitorIcon(QString(":/icons/%1/disabled-monitor.png").arg(parser.value("theme")));
-    foreach (RROutput outputId, resources->outputs()) {
+    foreach (QOutputId outputId, resources->outputs()) {
         QOutput* output = resources->output(outputId);
         if (output == nullptr)
             continue;
