@@ -28,10 +28,9 @@ QString KScreenResources::name = "KScreen";
 
 QScreenResources* KScreenResources::create(const QString& backend)
 {
-    if (backend.isEmpty() || (QString::compare(backend, KScreenResources::name, Qt::CaseInsensitive) == 0))
-        return KScreenResources::getCurrent();
+    Q_UNUSED(backend);
 
-    return nullptr;
+    return KScreenResources::getCurrent();
 }
 
 KScreenResources *KScreenResources::getCurrent()

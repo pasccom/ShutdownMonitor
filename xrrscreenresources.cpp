@@ -33,13 +33,9 @@ QScreenResources* XRandRScreenResources::create(const QString& backend)
     if (backend.isEmpty() && QX11Info::isPlatformX11())
         return XRandRScreenResources::getCurrent(QX11Info::display());
 
-    if (QString::compare(backend, XRandRScreenResources::name, Qt::CaseInsensitive) == 0) {
-        if (QX11Info::isPlatformX11())
-            return XRandRScreenResources::getCurrent(QX11Info::display());
-        qWarning() << QObject::tr("This backend only supports X11");
-        return nullptr;
-    }
-
+    if (QX11Info::isPlatformX11())
+        return XRandRScreenResources::getCurrent(QX11Info::display());
+    qWarning() << QObject::tr("This backend only supports X11");
     return nullptr;
 }
 

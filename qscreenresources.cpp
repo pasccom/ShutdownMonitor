@@ -39,6 +39,9 @@ QScreenResources* QScreenResources::create(const QString& backend)
         initBackends();
 
     foreach (auto b, availableBackends) {
+        if (!backend.isEmpty() && (QString::compare(backend, b.first, Qt::CaseInsensitive) != 0))
+            continue;
+
         QScreenResources* ans = b.second(backend);
         if (ans != nullptr)
             return ans;
