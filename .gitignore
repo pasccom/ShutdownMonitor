@@ -13,6 +13,7 @@ qrc_*.cpp
 /.qmake.cache
 /.qmake.stash
 Makefile*
+qscreenresourcesfactory.cpp
 
 # qtcreator generated files
 *.pro.user*

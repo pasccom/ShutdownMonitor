@@ -1,4 +1,4 @@
-# Copyright 2020 Pascal COMBES <pascom@orange.fr>
+# Copyright 2020-2023 Pascal COMBES <pascom@orange.fr>
 #
 # This file is part of ShutdownMonitor.
 #
@@ -46,15 +46,16 @@ SOURCES +=  main.cpp \
             qscreenresourcesfactory.cpp
 
 # The backends:
-BACKENDS=
+BACKEND_INCLUDES=
+BACKEND_INSERT=
 !unix {
     error("This program can only be compiled under unix, as it uses XrandR or KScreen APIs")
 }
 !equals(X11, no) {
     message("Include X11 backend")
-    BACKENDS += X11
+    BACKEND_INCLUDES += xrrscreenresources.h
+    BACKEND_INSERT += XRandRScreenResources
     LIBS += -lXrandr -lX11
-    DEFINES += SHUTDOWN_MONITOR_X11
 
     HEADERS +=  xrrscreenresources.h \
                 xrroutput.h \
@@ -65,18 +66,33 @@ BACKENDS=
 }
 !equals(KSCREEN, no) {
     message("Include KScreen backend")
-    BACKENDS += KScreen
+    BACKEND_INCLUDES += kscreenresources.h
+    BACKEND_INSERT += KScreenResources
     QT += KScreen
-    DEFINES += SHUTDOWN_MONITOR_KSCREEN
 
     HEADERS +=  kscreenresources.h \
                 kscreenoutput.h
     SOURCES +=  kscreenresources.cpp \
                 kscreenoutput.cpp
 }
-isEmpty(BACKENDS) {
+isEmpty(BACKEND_INCLUDES) || isEmpty(BACKEND_INSERT) {
     error("All backends have been disabled")
 }
+
+# Horrible hack to get a \n in $${NL}
+# relying on the fact that the 55th character
+# in this file is \n (end of first copyright line)
+NL=$$str_member($$cat(ShutdownMonitor.pro, false), 54, 55)
+
+BACKEND_INCLUDES=$$join(BACKEND_INCLUDES, "\"$${NL}$${LITERAL_HASH}include \"", "$${LITERAL_HASH}include \"", "\"")
+
+BACKEND_INSERT_LINES=
+for(B, BACKEND_INSERT) {
+    BACKEND_INSERT_LINES+="    availableBackends.insert($${B}::name, &$${B}::create);"
+}
+BACKEND_INSERT=$$join(BACKEND_INSERT_LINES, "$${NL}")
+
+QMAKE_SUBSTITUTES += qscreenresourcesfactory.cpp.in
 
 # The resources:
 contains(DEFINES, SHUTDOWN_MONITOR_SYSTRAY): RESOURCES += shutdownmonitor.qrc

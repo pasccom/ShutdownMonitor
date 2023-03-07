@@ -16,25 +16,12 @@
  * along with ShutdownMonitor. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "qscreenresources.h"
-
-#ifdef SHUTDOWN_MONITOR_KSCREEN
-#   include "kscreenresources.h"
-#endif // SHUTDOWN_MONITOR_KSCREEN
-
-#ifdef SHUTDOWN_MONITOR_X11
-#   include "xrrscreenresources.h"
-#endif // SHUTDOWN_MONITOR_X11
+#include \"qscreenresources.h\"
+$${BACKEND_INCLUDES}
 
 #include <QtDebug>
 
 void QScreenResources::initBackends(void)
 {
-#ifdef SHUTDOWN_MONITOR_KSCREEN
-    availableBackends.insert(KScreenResources::name, &KScreenResources::create);
-#endif // SHUTDOWN_MONITOR_KSCREEN
-
-#ifdef SHUTDOWN_MONITOR_X11
-    availableBackends.insert(XRandRScreenResources::name, &XRandRScreenResources::create);
-#endif // SHUTDOWN_MONITOR_X11
+$${BACKEND_INSERT}
 }
