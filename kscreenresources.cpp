@@ -26,9 +26,9 @@
 
 QString KScreenResources::name = "KScreen";
 
-QScreenResources* KScreenResources::create(const QString& backend)
+QScreenResources* KScreenResources::create(bool forceBackend)
 {
-    Q_UNUSED(backend);
+    Q_UNUSED(forceBackend);
 
     return KScreenResources::getCurrent();
 }

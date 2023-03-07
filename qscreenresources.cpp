@@ -19,7 +19,7 @@
 #include "qscreenresources.h"
 #include "qoutput.h"
 
-QList< QPair< QString, std::function<QScreenResources*(const QString&)> > > QScreenResources::availableBackends;
+QList< QPair< QString, std::function<QScreenResources*(bool)> > > QScreenResources::availableBackends;
 
 QStringList QScreenResources::listBackends(void)
 {
@@ -42,7 +42,7 @@ QScreenResources* QScreenResources::create(const QString& backend)
         if (!backend.isEmpty() && (QString::compare(backend, b.first, Qt::CaseInsensitive) != 0))
             continue;
 
-        QScreenResources* ans = b.second(backend);
+        QScreenResources* ans = b.second(!backend.isEmpty());
         if (ans != nullptr)
             return ans;
     }

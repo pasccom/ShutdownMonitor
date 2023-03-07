@@ -28,14 +28,12 @@
 
 QString XRandRScreenResources::name = "X11";
 
-QScreenResources* XRandRScreenResources::create(const QString& backend)
+QScreenResources* XRandRScreenResources::create(bool forceBackend)
 {
-    if (backend.isEmpty() && QX11Info::isPlatformX11())
-        return XRandRScreenResources::getCurrent(QX11Info::display());
-
     if (QX11Info::isPlatformX11())
         return XRandRScreenResources::getCurrent(QX11Info::display());
-    qWarning() << QObject::tr("This backend only supports X11");
+    if (forceBackend)
+        qWarning() << QObject::tr("This backend only supports X11");
     return nullptr;
 }
 

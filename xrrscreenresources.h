@@ -48,11 +48,11 @@ public:
      *
      * This method creates a new screen resource instance,
      * if the backend matches.
-     * \param backend Selected backend.
+     * \param forceBackend Whether the backend name was specified.
      * \return A new screen resources instance if the backend matches,
      * otherwise, \c nullptr.
      */
-    static QScreenResources* create(const QString& backend);
+    static QScreenResources* create(bool forceBackend);
     /*!
      * \brief Retrieve XRandR screen resources
      *
