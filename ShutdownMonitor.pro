@@ -51,6 +51,17 @@ BACKEND_INSERT=
 !unix {
     error("This program can only be compiled under unix, as it uses XrandR or KScreen APIs")
 }
+!equals(KSCREEN, no) {
+    message("Include KScreen backend")
+    BACKEND_INCLUDES += kscreenresources.h
+    BACKEND_INSERT += KScreenResources
+    QT += KScreen
+
+    HEADERS +=  kscreenresources.h \
+                kscreenoutput.h
+    SOURCES +=  kscreenresources.cpp \
+                kscreenoutput.cpp
+}
 !equals(X11, no) {
     message("Include X11 backend")
     BACKEND_INCLUDES += xrrscreenresources.h
@@ -63,17 +74,6 @@ BACKEND_INSERT=
     SOURCES +=  xrrscreenresources.cpp \
                 xrroutput.cpp \
                 xrrcrtc.cpp
-}
-!equals(KSCREEN, no) {
-    message("Include KScreen backend")
-    BACKEND_INCLUDES += kscreenresources.h
-    BACKEND_INSERT += KScreenResources
-    QT += KScreen
-
-    HEADERS +=  kscreenresources.h \
-                kscreenoutput.h
-    SOURCES +=  kscreenresources.cpp \
-                kscreenoutput.cpp
 }
 isEmpty(BACKEND_INCLUDES) || isEmpty(BACKEND_INSERT) {
     error("All backends have been disabled")
