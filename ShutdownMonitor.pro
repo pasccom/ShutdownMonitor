@@ -102,7 +102,8 @@ TRANSLATIONS += shutdownmonitor_en.ts \
                 shutdownmonitor_fr.ts
 
 # Other files:
-OTHER_FILES +=  .gitignore          \
+OTHER_FILES +=  README.md           \
+                .gitignore          \
                 Doxyfile            \
                 Doxyfile.internal
 
