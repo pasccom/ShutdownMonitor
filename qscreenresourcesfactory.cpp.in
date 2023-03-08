@@ -19,8 +19,6 @@
 #include \"qscreenresources.h\"
 $${BACKEND_INCLUDES}
 
-#include <QtDebug>
-
 void QScreenResources::initBackends(void)
 {
 $${BACKEND_INSERT}
