@@ -49,7 +49,7 @@ private:
      *
      * Initialize the class with the given information.
      * \param parent The parent screen resources.
-     * \param info The output information from XrandR.
+     * \param output The output information from Kscreen.
      */
     KScreenOutput(KScreenResources* parent, const KScreen::OutputPtr& output);
 

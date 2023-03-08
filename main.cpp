@@ -61,11 +61,16 @@
  *
  * \section console Command-line interface
  * Hereafter is a table describing command-line options:
- * | Short | Long form          | Arguments   | Description                                                    |
- * | :---- | :----------------- | :---------- | :------------------------------------------------------------- |
- * | \c -t | \c --toggle-output | \c <output> | The outputs to disable before starting (comma-separated list). |
- * | ^     | ^                  | ^           | This switch can also be repeated to list multiple outputs.     |
- * | \c -l | \c --list-outputs  |             | List outputs and quit.                                         |
+ * | Short | Long form          | Arguments      | Description                                                           |
+ * | :---- | :----------------- | :------------- | :-------------------------------------------------------------------- |
+ * | \c -t | \c --toggle-output | \c \<output\>  | The outputs to disable before starting (comma-separated list).        |
+ * | ^     | ^                  | ^              | This switch can also be repeated to list multiple outputs.            |
+ * | \c -l | \c --list-outputs  |                | List outputs and quit.                                                |
+ * |       | \c --theme         | \c \<theme\>   | The theme to be used by the system tray interface.                    |
+ * | ^     | ^                  | ^              | This option is available only when the systray interface is built in. |
+ * |       | \c --list-backends |                | Lists the available backend (usable with the \c --backend switch).    |
+ * |       | \c --backend       | \c \<backend\> | The backend to be used (if it cannot be used the program will stop).  |
+ * | ^     | ^                  | ^              | By default, the first usable backend is selected.                     |
  */
 #ifdef SHUTDOWN_MONITOR_CONSOLE
 QStringList toggleOutputs(QScreenResources* resources, QStringList& outputs)
