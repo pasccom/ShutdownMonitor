@@ -155,13 +155,14 @@ int main(int argc, char *argv[])
 #ifdef SHUTDOWN_MONITOR_CONSOLE
     // List outputs:
     if (parser.isSet("list-outputs")) {
+        std::cout << "Connected outputs:" << std::endl;
         foreach (QOutputId outputId, resources->outputs()) {
             QOutput* output = resources->output(outputId);
             if (output == nullptr)
                 continue;
             if (output->connection != QOutput::Connection::Connected)
                 continue;
-            std::cout << qPrintable(output->name) << std::endl;
+            std::cout << "  - " << qPrintable(output->name) << std::endl;
         }
         done = true;
     }
