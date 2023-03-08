@@ -4,10 +4,6 @@
 <context>
     <name>QObject</name>
     <message>
-        <source>This program only supports X11</source>
-        <translation>This program only supports X11</translation>
-    </message>
-    <message>
         <source>This program requires the system tray</source>
         <translation>This program requires the system tray</translation>
     </message>
@@ -60,6 +56,22 @@
 This switch can also be repeated to list multiple outputs.</source>
         <translation>The outputs to disable before starting (comma-separated list).
 This switch can also be repeated to list multiple outputs.</translation>
+    </message>
+    <message>
+        <source>List backends and quit.</source>
+        <translation>List backends and quit.</translation>
+    </message>
+    <message>
+        <source>The backend to be used to manage the screen.</source>
+        <translation>The backend to be used to manage the screen.</translation>
+    </message>
+    <message>
+        <source>backend</source>
+        <translation>backend</translation>
+    </message>
+    <message>
+        <source>This backend only supports X11</source>
+        <translation>This backend only supports X11</translation>
     </message>
 </context>
 </TS>

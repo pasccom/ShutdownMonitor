@@ -4,10 +4,6 @@
 <context>
     <name>QObject</name>
     <message>
-        <source>This program only supports X11</source>
-        <translation>Ce programme ne supporte que X11</translation>
-    </message>
-    <message>
         <source>This program requires the system tray</source>
         <translation>Ce programme requiert la boîte à miniatures</translation>
     </message>
@@ -60,6 +56,22 @@
 This switch can also be repeated to list multiple outputs.</source>
         <translation>Les sorties à éteindre avant de démarrer. (séparées par des virgules).
 Cet argument peut aussi être répété pour lister plusieurs sorties.</translation>
+    </message>
+    <message>
+        <source>List backends and quit.</source>
+        <translation>Liste les backends et quitte.</translation>
+    </message>
+    <message>
+        <source>The backend to be used to manage the screen.</source>
+        <translation>Le backend à utiliser pour gérer l&apos;écran.</translation>
+    </message>
+    <message>
+        <source>backend</source>
+        <translation>backend</translation>
+    </message>
+    <message>
+        <source>This backend only supports X11</source>
+        <translation>Ce backend ne support qu&apos;X11</translation>
     </message>
 </context>
 </TS>
