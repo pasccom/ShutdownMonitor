@@ -282,7 +282,8 @@ int main(int argc, char *argv[])
     QObject::connect(&app, &QApplication::aboutToQuit, [resources] {
         foreach (QOutputId outputId, resources->outputs()) {
             QOutput* output = resources->output(outputId);
-            output->enable();
+            if (output->connection == QOutput::Connection::Connected)
+                output->enable();
         }
         qDebug() << "Delete screen resources";
         delete resources;
