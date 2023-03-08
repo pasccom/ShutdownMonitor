@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     // Setup application:
     QApplication app(argc, argv);
     QApplication::setApplicationName("ShutdownMonitor");
-    QApplication::setApplicationVersion("0.0.1");
+    QApplication::setApplicationVersion("2.0.0");
     QApplication::setOrganizationName("pascom");
 
     // Load and install translator for the system locale:

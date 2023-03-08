@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ShutdownMonitor. If not, see <http://www.gnu.org/licenses/>
 
-TARGET = shutdownmonitor    # The name of the executable
+TARGET   = shutdownmonitor  # The name of the executable
+VERSION  = 2.0.0            # The version of the application
 TEMPLATE = app              # Make an executable
 
 # Qt configuration:

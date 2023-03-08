@@ -3,7 +3,7 @@ This repository contains a small program allowing to enable and disable the moni
 
 # :warning: WARNING
 ShutdownMonitor v1.0.0 uses directly the X11 backend, which seems to be incompatible with Plasma version 5.27.0 (and probably higher).
-In Plasma version 5.27.0 and higher use the "Display parameters" to enable or disable a screen.
+This warning does not apply to ShutdownMonitor v2.0.0, which can uses KScreen as a backend.
 
 # FEATURES
 Here is a list of the current features of the program:
@@ -11,10 +11,9 @@ Here is a list of the current features of the program:
   - Disable monitor from the command-line
   - Restore the initial state when quitting
   - Light and dark themes
+  - Works with X11 or KScreen (simpler interface than the one provided natively by KScreen ("Display configuration" applet in system tray and the "Display parameters" configuration panel)
   
 # FUTURE DEVELOPMENTS
-Despite the intagration of screen enabling and disabling into Plasma, I may try to interface Shutdown monitor with KScreen, as the interface is much simpler than the current implementation with "Display configuration" applet in system tray and the "Display parameters" configuration panel.
-
 Here are some ideas I plan to implement later:
   - Identify monitors when showing the system tray icon context menu
   - Enable initially disabled monitors
@@ -23,11 +22,16 @@ Here are some ideas I plan to implement later:
 You can select which interfaces are compiled using the following arguments in qmake command line:
   - Disable the command-line interface using `CONSOLE=no`
   - Disable the system tray interface using `SYSTRAY=no`
+
+You can select which backends are compiled using the following arguments in qmake command line:
+  - Disable the KScreen backend using `KSCREEN=no`
+  - Disable the X11 backend using `X11=no`
+
 You can configure the prefix using `PREFIX=/prefix`
   
-To build the program, use
+To build the program with all interfaces and backends enabled (which is the default), use
 ```
-$ qmake-qt5 ShutdownMonitor.pro PREFIX=/usr/local CONSOLE=yes SYSTRAY=yes
+$ qmake-qt5 ShutdownMonitor.pro PREFIX=/usr/local CONSOLE=yes SYSTRAY=yes KSCREEN=yes X11=yes
 $ make
 ```
 
@@ -45,11 +49,16 @@ a black monitor![](https://github.com/pasccom/ShutdownMonitor/blob/master/icons/
 
 ## Command-line interface
 Hereafter is a table describing command-line options:
-| Short | Long form         | Arguments   | Description                                                    |
-| :---- | :---------------- | :---------- | :------------------------------------------------------------- |
-| `-t`  | `--toggle-output` |  `<output>` | The outputs to disable before starting (comma-separated list). |
-|       |                   |             | This switch can also be repeated to list multiple outputs.     |
-| `-l`  | `--list-outputs`  |             | List outputs and quit.                                         |
+| Short | Long form          | Arguments    | Description                                                           |
+| :---- | :----------------- | :----------- | :-------------------------------------------------------------------- |
+| `-t`  | `--toggle-output`  |  `<output>`  | The outputs to disable before starting (comma-separated list).        |
+|       |                    |              | This switch can also be repeated to list multiple outputs.            |
+| `-l`  | `--list-outputs`   |              | List outputs and quit.                                                |
+|       | `--theme`          | `<theme>`    | The theme to be used by the system tray interface.                    |
+|       |                    |              | This option is available only when the systray interface is built in. |
+|       | `--list-backends`  |              | Lists the available backend (usable with the \c --backend switch).    |
+|       | `--backend`        | `<backend>`  | The backend to be used (if it cannot be used the program will stop).  |
+|       |                    |              | By default, the first usable backend is selected.                     |
 
 # LICENSING INFORMATION
 ShutdownMonitor is free software: you can redistribute it and/or modify
