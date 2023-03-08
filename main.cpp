@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
     // Toggle output:
     QStringList outputs;
     foreach (QString outputList, parser.values("toggle-output"))
-        outputs << outputList.split(',', QString::SkipEmptyParts);
+        outputs << outputList.split(',', Qt::SkipEmptyParts);
     if (!outputs.isEmpty()) {
         if (socketpair(AF_UNIX, SOCK_RAW, 0, socketFds) != 0) {
             qWarning() << "Could not create socket pair. Error:" << errno << QString("(%1)").arg(strerror(errno));
