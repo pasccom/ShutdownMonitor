@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with ShutdownMonitor. If not, see <http://www.gnu.org/licenses/>
 
+warning("Building with qMake is not deprecated.")
+warning("Please use CMake.")
+
 TARGET   = shutdownmonitor  # The name of the executable
 VERSION  = 2.0.0            # The version of the application
 TEMPLATE = app              # Make an executable
@@ -93,7 +96,7 @@ for(B, BACKEND_INSERT) {
 }
 BACKEND_INSERT=$$join(BACKEND_INSERT_LINES, "$${NL}")
 
-QMAKE_SUBSTITUTES += qscreenresourcesfactory.cpp.in
+QMAKE_SUBSTITUTES += qscreenresourcesfactory.cpp.pro.in
 
 # The resources:
 contains(DEFINES, SHUTDOWN_MONITOR_SYSTRAY): RESOURCES += shutdownmonitor.qrc

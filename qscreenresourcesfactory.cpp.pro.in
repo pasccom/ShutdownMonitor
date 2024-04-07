@@ -16,10 +16,10 @@
  * along with ShutdownMonitor. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "qscreenresources.h"
-@INCLUDE_BACKENDS@
+#include \"qscreenresources.h\"
+$${BACKEND_INCLUDES}
 
 void QScreenResources::initBackends(void)
 {
-    @INSERT_BACKENDS@
+$${BACKEND_INSERT}
 }

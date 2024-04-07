@@ -16,4 +16,4 @@ Makefile*
 qscreenresourcesfactory.cpp
 
 # qtcreator generated files
-*.pro.user*
+*.user*
