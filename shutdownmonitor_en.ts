@@ -73,5 +73,9 @@ This switch can also be repeated to list multiple outputs.</translation>
         <source>This backend only supports X11</source>
         <translation>This backend only supports X11</translation>
     </message>
+    <message>
+        <source>Available backends:</source>
+        <translation>Available backends:</translation>
+    </message>
 </context>
 </TS>

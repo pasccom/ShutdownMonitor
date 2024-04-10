@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 
     // List backends:
     if (parser.isSet("list-backends")) {
-        std::cout << "Available backends:" << std::endl;
+        std::cout << QObject::tr("Available backends:").toStdString() << std::endl;
         foreach (QString backend, QScreenResources::listBackends())
             std::cout << "  - " << qPrintable(backend) << std::endl;
         return 0;

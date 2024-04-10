@@ -73,5 +73,9 @@ Cet argument peut aussi être répété pour lister plusieurs sorties.</translat
         <source>This backend only supports X11</source>
         <translation>Ce backend ne support qu&apos;X11</translation>
     </message>
+    <message>
+        <source>Available backends:</source>
+        <translation>Backends disponibles:</translation>
+    </message>
 </context>
 </TS>
