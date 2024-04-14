@@ -40,7 +40,7 @@ KScreenResources *KScreenResources::getCurrent()
 {
     KScreen::GetConfigOperation opCurrent(KScreen::ConfigOperation::NoOptions);
     if (!opCurrent.exec()) {
-        qWarning() << "Could not retrieve current config:" << opCurrent.errorString();
+        qWarning() << QObject::tr("Could not retrieve current config. Error:") << opCurrent.errorString();
         return nullptr;
     } else {
         return new KScreenResources(opCurrent.config());
@@ -205,6 +205,6 @@ bool KScreenResources::updateConfig(const QPoint& offset, uint32_t shift)
     if (opSet.exec())
         return true;
 
-    qWarning() << "Could not set config:" << opSet.errorString();
+    qWarning() << QObject::tr("Could not set config. Error:") << opSet.errorString();
     return false;
 }

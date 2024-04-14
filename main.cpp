@@ -112,9 +112,12 @@ int main(int argc, char *argv[])
 
     // Load and install translator for the system locale:
     QTranslator translator(&app);
-    translator.load(QLocale(), "shutdownmonitor", "_", app.applicationDirPath());
-    if (!app.installTranslator(&translator))
-        qWarning() << "Could not install translator";
+    if (translator.load(QLocale(), "shutdownmonitor", "_", app.applicationDirPath())) {
+        if (!app.installTranslator(&translator))
+            qWarning() << "Could not install translator";
+    } else {
+        qWarning() << "Could not load translator";
+    }
 
     // Setup command line arguments parser:
     QCommandLineParser parser;
@@ -137,7 +140,7 @@ int main(int argc, char *argv[])
 
     // List backends:
     if (parser.isSet("list-backends")) {
-        std::cout << QObject::tr("Available backends:").toStdString() << std::endl;
+        std::cout << qPrintable(QObject::tr("Available backends:")) << std::endl;
         foreach (QString backend, QScreenResources::listBackends())
             std::cout << "  - " << qPrintable(backend) << std::endl;
         return 0;
@@ -146,10 +149,10 @@ int main(int argc, char *argv[])
     // Load screen resources:
     QScreenResources* resources = QScreenResources::create(parser.value("backend"));
     if (resources == nullptr) {
-        qWarning() << "No supported backend available";
+        qWarning() << QObject::tr("No supported backend available");
         return -1;
     }
-    std::cout << "Using backend: " << qPrintable(resources->name) << std::endl;
+    std::cout << qPrintable(QObject::tr("Using backend: ")) << qPrintable(resources->name) << std::endl;
 
 #ifdef SHUTDOWN_MONITOR_SYSTRAY
     bool done = false;
@@ -160,7 +163,7 @@ int main(int argc, char *argv[])
 #ifdef SHUTDOWN_MONITOR_CONSOLE
     // List outputs:
     if (parser.isSet("list-outputs")) {
-        std::cout << "Connected outputs:" << std::endl;
+        std::cout << qPrintable(QObject::tr("Connected outputs:")) << std::endl;
         foreach (QOutputId outputId, resources->outputs()) {
             QOutput* output = resources->output(outputId);
             if (output == nullptr)
@@ -178,7 +181,7 @@ int main(int argc, char *argv[])
         outputs << outputList.split(',', Qt::SkipEmptyParts);
     if (!outputs.isEmpty()) {
         if (socketpair(AF_UNIX, SOCK_RAW, 0, socketFds) != 0) {
-            qWarning() << "Could not create socket pair. Error:" << errno << QString("(%1)").arg(strerror(errno));
+            qWarning() << QObject::tr("Could not create socket pair. Error:") << errno << QString("(%1)").arg(strerror(errno));
         } else {
             struct sigaction sigInt;
             sigInt.sa_handler = signalHandler;
@@ -186,7 +189,7 @@ int main(int argc, char *argv[])
             sigInt.sa_flags = SA_RESTART;
 
             if (sigaction(SIGINT, &sigInt, 0) != 0) {
-                qWarning() << "Could not install signal handler. Error:" << errno << QString("(%1)").arg(strerror(errno));
+                qWarning() << QObject::tr("Could not install signal handler. Error:") << errno << QString("(%1)").arg(strerror(errno));
             } else {
                 char buffer;
                 QStringList toggledOutputs;
