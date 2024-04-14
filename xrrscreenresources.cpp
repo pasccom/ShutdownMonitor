@@ -20,9 +20,13 @@
 #include "xrroutput.h"
 #include "xrrcrtc.h"
 
+#if QT_VERSION >= 0x060000
+#   include <QtGui>
+#else // QT_VERSION
+#   include <QX11Info>
+#endif // QT_VERSION
 #include <QtDebug>
 
-#include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
 
@@ -30,8 +34,15 @@ QString XRandRScreenResources::name = "X11";
 
 QScreenResources* XRandRScreenResources::create(bool forceBackend)
 {
+#if QT_VERSION >= 0x060000
+    QNativeInterface::QX11Application* x11App = qGuiApp->nativeInterface<QNativeInterface::QX11Application>();
+
+    if (x11App != nullptr)
+        return XRandRScreenResources::getCurrent(x11App->display());
+#else // QT_VERSION
     if (QX11Info::isPlatformX11())
         return XRandRScreenResources::getCurrent(QX11Info::display());
+#endif // QT_VERSION
     if (forceBackend)
         qWarning() << QObject::tr("This backend only supports X11");
     return nullptr;

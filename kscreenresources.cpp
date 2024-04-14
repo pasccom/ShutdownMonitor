@@ -24,7 +24,10 @@
 #include <KScreen/GetConfigOperation>
 #include <KScreen/SetConfigOperation>
 
-QString KScreenResources::name = "KScreen";
+#define __STR(_x_) #_x_
+#define STR(_x_) __STR(_x_)
+
+QString KScreenResources::name = "KScreen" STR(KSCREEN_VERSION);
 
 QScreenResources* KScreenResources::create(bool forceBackend)
 {

@@ -9,6 +9,8 @@ option(CONSOLE_UI "Include command line interface" ON)
 option(SYSTRAY_UI "Include system tray interface" ON)
 option(X11_BACKEND "Include X11 backend" ON)
 option(KSCREEN5_BACKEND "Include KScreen5 backend" ON)
+option(KSCREEN6_BACKEND "Include KScreen6 backend" ON)
+set(QT_VERSION 6 CACHE STRING "Qt version to use")
 
 # C++ configuration
 set(CMAKE_CXX_STANDARD 17)
@@ -18,11 +20,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-if (X11_BACKEND)
-    find_package(Qt5 COMPONENTS Widgets X11Extras LinguistTools REQUIRED)
+if (QT_VERSION EQUAL 5)
+    set(QT Qt5)
+    if (X11_BACKEND)
+        find_package(Qt5 COMPONENTS Core X11Extras Widgets LinguistTools REQUIRED)
+    else()
+        find_package(Qt5 COMPONENTS Core Widgets LinguistTools REQUIRED)
+    endif()
+elseif (QT_VERSION EQUAL 6)
+    set(QT Qt6)
+    find_package(Qt6 COMPONENTS Core Widgets LinguistTools REQUIRED)
 else()
-    find_package(Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
+    message(FATAL_ERROR "Unsupported Qt version ${QT_VERSION}")
 endif()
+message("Using ${QT}")
 
 # Target shutdownmonitor
 add_executable(shutdownmonitor
@@ -32,8 +43,7 @@ add_executable(shutdownmonitor
     main.cpp
 )
 target_include_directories(shutdownmonitor PRIVATE "${CMAKE_SOURCE_DIR}")
-target_link_libraries(shutdownmonitor Qt5::Widgets)
-target_compile_definitions(shutdownmonitor PRIVATE QT_DISABLE_DEPRECATED_UP_TO=0x050F00)
+target_link_libraries(shutdownmonitor ${QT}::Widgets)
 
 # Console interface
 if (CONSOLE_UI)
@@ -54,19 +64,42 @@ endif()
 set(BACKEND_INCLUDES "")
 set(BACKEND_INSERT "")
 
-# KScreen5 backend
-if (KSCREEN5_BACKEND)
-    find_package(KF5Screen REQUIRED)
+# KScreen6 backend
+if (KSCREEN6_BACKEND AND (QT_VERSION EQUAL 6))
+    find_package(KF6Screen REQUIRED)
 
-    message("Include KScreen5 backend")
-    list(APPEND BACKEND_INCLUDES "kscreenresources.h")
-    list(APPEND BACKEND_INSERT "KScreenResources")
-    target_link_libraries(shutdownmonitor KF5::Screen)
-
-    target_sources(shutdownmonitor PRIVATE
+    message("Include KScreen6 backend")
+    add_library(backend_kscreen6)
+    target_link_libraries(backend_kscreen6 ${QT}::Core)
+    target_link_libraries(backend_kscreen6 KF6::Screen)
+    target_compile_definitions(backend_kscreen6 PRIVATE KSCREEN_VERSION=6)
+    target_sources(backend_kscreen6 PRIVATE
         kscreenresources.cpp
         kscreenoutput.cpp
     )
+
+    list(APPEND BACKEND_INCLUDES "kscreenresources.h")
+    list(APPEND BACKEND_INSERT "KScreenResources")
+    target_link_libraries(shutdownmonitor backend_kscreen6)
+endif()
+
+# KScreen5 backend
+if (KSCREEN5_BACKEND AND (QT_VERSION EQUAL 5))
+    find_package(KF5Screen REQUIRED)
+
+    message("Include KScreen5 backend")
+    add_library(backend_kscreen5)
+    target_link_libraries(backend_kscreen5 ${QT}::Core)
+    target_link_libraries(backend_kscreen5 KF5::Screen)
+    target_compile_definitions(backend_kscreen5 PRIVATE KSCREEN_VERSION=5)
+    target_sources(backend_kscreen5 PRIVATE
+        kscreenresources.cpp
+        kscreenoutput.cpp
+    )
+
+    list(APPEND BACKEND_INCLUDES "kscreenresources.h")
+    list(APPEND BACKEND_INSERT "KScreenResources")
+    target_link_libraries(shutdownmonitor backend_kscreen5)
 endif()
 
 # X11 backend
@@ -74,15 +107,22 @@ if (X11_BACKEND)
     #find_package(Qt5 COMPONENTS X11Extras REQUIRED)
 
     message("Include X11 backend")
-    list(APPEND BACKEND_INCLUDES "xrrscreenresources.h")
-    list(APPEND BACKEND_INSERT "XRandRScreenResources")
-    target_link_libraries(shutdownmonitor Qt5::X11Extras Xrandr X11)
-
-    target_sources(shutdownmonitor PRIVATE
+    add_library(backend_x11)
+    if (QT_VERSION EQUAL 5)
+        target_link_libraries(backend_x11 ${QT}::X11Extras)
+    elseif (QT_VERSION EQUAL 6)
+        target_link_libraries(backend_x11 ${QT}::Gui)
+    endif()
+    target_link_libraries(backend_x11 Xrandr X11)
+    target_sources(backend_x11 PRIVATE
         xrrscreenresources.cpp
         xrroutput.cpp
         xrrcrtc.cpp
     )
+
+    list(APPEND BACKEND_INCLUDES "xrrscreenresources.h")
+    list(APPEND BACKEND_INSERT "XRandRScreenResources")
+    target_link_libraries(shutdownmonitor backend_x11)
 endif()
 
 # Check backends
@@ -107,9 +147,9 @@ set(TRANSLATIONS
     shutdownmonitor_en.ts
 )
 
-qt5_create_translation(LUPDATE_VAR ${CMAKE_SOURCE_DIR} ${TRANSLATIONS} OPTIONS -extensions cpp)
+qt_create_translation(LUPDATE_VAR ${CMAKE_SOURCE_DIR} ${TRANSLATIONS} OPTIONS -extensions cpp)
 add_custom_target(lupdate DEPENDS ${LUPDATE_VAR})
-qt5_add_translation(LRELEASE_VAR ${TRANSLATIONS})
+qt_add_translation(LRELEASE_VAR ${TRANSLATIONS})
 add_custom_target(lrelease ALL DEPENDS ${LRELEASE_VAR})
 
 # Doxygen
