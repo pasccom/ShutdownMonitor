@@ -35,6 +35,11 @@ else()
 endif()
 message("Using ${QT}")
 
+add_library(qt_config INTERFACE)
+if (NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+    target_compile_definitions(qt_config INTERFACE QT_NO_DEBUG_OUTPUT)
+endif()
+
 # Target shutdownmonitor
 add_executable(shutdownmonitor
     qscreenresources.cpp
@@ -44,6 +49,7 @@ add_executable(shutdownmonitor
 )
 target_include_directories(shutdownmonitor PRIVATE "${CMAKE_SOURCE_DIR}")
 target_link_libraries(shutdownmonitor ${QT}::Widgets)
+target_link_libraries(shutdownmonitor qt_config)
 
 # Console interface
 if (CONSOLE_UI)
@@ -72,6 +78,7 @@ if (KSCREEN6_BACKEND AND (QT_VERSION EQUAL 6))
     add_library(backend_kscreen6)
     target_link_libraries(backend_kscreen6 ${QT}::Core)
     target_link_libraries(backend_kscreen6 KF6::Screen)
+    target_link_libraries(backend_kscreen6 qt_config)
     target_compile_definitions(backend_kscreen6 PRIVATE KSCREEN_VERSION=6)
     target_sources(backend_kscreen6 PRIVATE
         kscreenresources.cpp
@@ -91,6 +98,7 @@ if (KSCREEN5_BACKEND AND (QT_VERSION EQUAL 5))
     add_library(backend_kscreen5)
     target_link_libraries(backend_kscreen5 ${QT}::Core)
     target_link_libraries(backend_kscreen5 KF5::Screen)
+    target_link_libraries(backend_kscreen5 qt_config)
     target_compile_definitions(backend_kscreen5 PRIVATE KSCREEN_VERSION=5)
     target_sources(backend_kscreen5 PRIVATE
         kscreenresources.cpp
@@ -114,6 +122,7 @@ if (X11_BACKEND)
         target_link_libraries(backend_x11 ${QT}::Gui)
     endif()
     target_link_libraries(backend_x11 Xrandr X11)
+    target_link_libraries(backend_x11 qt_config)
     target_sources(backend_x11 PRIVATE
         xrrscreenresources.cpp
         xrroutput.cpp
