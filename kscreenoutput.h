@@ -52,6 +52,14 @@ private:
      * \param output The output information from Kscreen.
      */
     KScreenOutput(KScreenResources* parent, const KScreen::OutputPtr& output);
+    /*!
+     * \brief Update the output
+     *
+     * This function actualizes the properties of the output.
+     * \note Currently only the connection state is updated.
+     * \param output The output from KScreen
+     */
+    void update(const KScreen::OutputPtr& output);
 
     KScreen::OutputPtr mOutput; /*!< The actual KScreen output */
     QRect mRect;                /*!< The output rect on the screen from the original configuration */

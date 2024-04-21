@@ -40,6 +40,16 @@ KScreenOutput::KScreenOutput(KScreenResources* parent, const KScreen::OutputPtr&
     mEnabled = !output.isNull() ? output->isEnabled() : false;
 }
 
+void KScreenOutput::update(const KScreen::OutputPtr& output)
+{
+    if (!output.isNull() && output->isEnabled()) {
+        if (output->isConnected())
+            connection = QOutput::Connection::Connected;
+        else
+            connection = QOutput::Connection::Disconnected;
+    }
+}
+
 QString KScreenOutput::display(void) const
 {
     if (mOutput.isNull())

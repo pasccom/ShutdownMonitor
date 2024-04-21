@@ -93,7 +93,14 @@ private:
      * \sa getCurrent()
      */
     KScreenResources(const KScreen::ConfigPtr& config);
-
+    /*!
+     * \brief Refresh the cached output list
+     *
+     * Refresh the QList of output internal representations
+     * using the data in the given config.
+     * \param config The config from where to get the outputs.
+     */
+    void refreshOutputs(const KScreen::ConfigPtr& config);
     /*!
      * \brief Compute total screen
      *
@@ -136,7 +143,24 @@ private:
      */
     bool updateConfig(const QPoint& offset, uint32_t shift);
 
-    KScreen::ConfigPtr mConfig; /*!< The current KScreen configuration */
+    /*!
+     * \brief Get KScreen configuration
+     *
+     * This function gets the current configuration from KScreen.
+     * \return The current KScreen configuration
+     * \sa setConfig()
+     */
+    static KScreen::ConfigPtr getConfig(void);
+
+    /*!
+     * \brief Set KScreen configuration
+     *
+     * This function sets the given configuration into KScreen.
+     * \param config The KScreen config to set.
+     * \return Whether the configuration was successfully set.
+     * \sa getConfig()
+     */
+    static bool setConfig(const KScreen::ConfigPtr& config);
 };
 
 #endif // KSCREENRESOURCES_H

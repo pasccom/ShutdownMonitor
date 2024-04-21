@@ -38,25 +38,99 @@ QScreenResources* KScreenResources::create(bool forceBackend)
 
 KScreenResources *KScreenResources::getCurrent()
 {
-    KScreen::GetConfigOperation opCurrent(KScreen::ConfigOperation::NoOptions);
-    if (!opCurrent.exec()) {
-        qWarning() << QObject::tr("Could not retrieve current config. Error:") << opCurrent.errorString();
+    KScreen::ConfigPtr config = getConfig();
+
+    if (config.isNull())
         return nullptr;
-    } else {
-        return new KScreenResources(opCurrent.config());
-    }
+
+    return  new KScreenResources(config);
+}
+
+KScreen::ConfigPtr KScreenResources::getConfig(void)
+{
+    KScreen::GetConfigOperation* opGet = new KScreen::GetConfigOperation(KScreen::ConfigOperation::NoOptions);
+    if (opGet->exec())
+        return opGet->config();
+
+    qWarning() << QObject::tr("Could not retrieve current config. Error:") << opGet->errorString();
+    return KScreen::ConfigPtr();
+}
+
+bool KScreenResources::setConfig(const KScreen::ConfigPtr& config)
+{
+    KScreen::SetConfigOperation* opSet = new KScreen::SetConfigOperation(config);
+    if (opSet->exec())
+        return true;
+
+    qWarning() << QObject::tr("Could not set config. Error:") << opSet->errorString();
+    return false;
 }
 
 KScreenResources::KScreenResources(const KScreen::ConfigPtr& config)
-    : QScreenResources(KScreenResources::name), mConfig(config)
-{}
+    : QScreenResources(KScreenResources::name)
+{
+    mOutputs.clear();
+    refreshOutputs(config);
+}
+
 
 void KScreenResources::refreshOutputs(void)
 {
-    qDeleteAll(mOutputs);
+    KScreen::ConfigPtr config = getConfig();
+    if (config.isNull())
+        return;
 
-    for (KScreen::OutputPtr output : mConfig->outputs())
-        mOutputs.insert(output->id(), new KScreenOutput(this, output));
+    refreshOutputs(config);
+}
+
+void KScreenResources::refreshOutputs(const KScreen::ConfigPtr& config)
+{
+    QList<QOutputId> deletedIds;
+
+    // Update outputs and create new ones:
+    for (KScreen::OutputPtr output : config->outputs()) {
+        KScreenOutput* kOutput = dynamic_cast<KScreenOutput*>(mOutputs.value(output->id()));
+        if (kOutput == nullptr) {
+            QMap<QOutputId, QOutput*>::const_iterator outputIt;
+
+            for (outputIt = mOutputs.constBegin(); outputIt != mOutputs.constEnd(); outputIt++) {
+                if (QString::compare(output->name(), outputIt.value()->name, Qt::CaseSensitive) == 0) {
+                    kOutput = dynamic_cast<KScreenOutput*>(outputIt.value());
+                    break;
+                }
+            }
+
+            if (kOutput != nullptr) {
+                // Existing output changed id
+                mOutputs.remove(outputIt.key());
+                mOutputs.insert(output->id(), kOutput);
+            } else {
+                // New output
+                mOutputs.insert(output->id(), new KScreenOutput(this, output));
+                continue;
+            }
+        }
+        // Update output
+        kOutput->update(output);
+    }
+
+    // Remove deleted outputs
+    for (QOutputId outputId: mOutputs.keys()) {
+        bool found = false;
+        for (KScreen::OutputPtr output : config->outputs()) {
+            if (output->id() == outputId) {
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            deletedIds.append(outputId);
+    }
+
+    for (QOutputId outputId : deletedIds) {
+        QOutput* output = mOutputs.take(outputId);
+        delete output;
+    }
 }
 
 bool KScreenResources::enableOutput(QOutput* output, bool grab)
@@ -188,10 +262,21 @@ uint32_t KScreenResources::computePriority(void) const
 
 bool KScreenResources::updateConfig(const QPoint& offset, uint32_t shift)
 {
-    foreach (KScreen::OutputPtr output, mConfig->outputs()) {
+    KScreen::ConfigPtr config = getConfig();
+    if (config.isNull())
+        return false;
+
+    foreach (KScreen::OutputPtr output, config->outputs())
+        qDebug() << output->isEnabled() << output-> isConnected() << output->name() << output->id() << output->pos() << output->priority();
+
+    refreshOutputs(config);
+
+    foreach (KScreen::OutputPtr output, config->outputs()) {
         KScreenOutput* kOutput = dynamic_cast<KScreenOutput*>(mOutputs.value(output->id()));
-        if (kOutput == nullptr)
+        if (kOutput == nullptr) {
+
             continue;
+        }
 
         if (output->isEnabled() != kOutput->mEnabled)
             output->setEnabled(kOutput->mEnabled);
@@ -201,10 +286,8 @@ bool KScreenResources::updateConfig(const QPoint& offset, uint32_t shift)
             output->setPriority(kOutput->mPriority - shift);
     }
 
-    KScreen::SetConfigOperation opSet(mConfig);
-    if (opSet.exec())
-        return true;
+    foreach (KScreen::OutputPtr output, config->outputs())
+        qDebug() << output->isEnabled() << output-> isConnected() << output->name() << output->id() << output->pos() << output->priority();
 
-    qWarning() << QObject::tr("Could not set config. Error:") << opSet.errorString();
-    return false;
+    return setConfig(config);
 }
