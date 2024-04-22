@@ -19,7 +19,7 @@ warning("Building with qMake is not deprecated.")
 warning("Please use CMake.")
 
 TARGET   = shutdownmonitor  # The name of the executable
-VERSION  = 2.0.0            # The version of the application
+VERSION  = 3.0.0            # The version of the application
 TEMPLATE = app              # Make an executable
 
 # Qt configuration:

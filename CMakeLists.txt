@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.27)
 
 # Project configuration
-project(ShutdownMonitor VERSION 2.0.1 LANGUAGES CXX)
+project(ShutdownMonitor VERSION 3.0.0 LANGUAGES CXX)
 
 # Options
 option(CONSOLE_UI "Include command line interface" ON)
