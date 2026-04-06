@@ -13,7 +13,7 @@ option(KSCREEN6_BACKEND "Include KScreen6 backend" ON)
 set(QT_VERSION 6 CACHE STRING "Qt version to use")
 
 # C++ configuration
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Qt configuration
