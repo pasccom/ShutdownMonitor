@@ -10,6 +10,7 @@ option(SYSTRAY_UI "Include system tray interface" ON)
 option(X11_BACKEND "Include X11 backend" ON)
 option(KSCREEN5_BACKEND "Include KScreen5 backend" ON)
 option(KSCREEN6_BACKEND "Include KScreen6 backend" ON)
+option(WITH_DOCS "Build documentation" OFF)
 set(QT_VERSION 6 CACHE STRING "Qt version to use")
 
 # C++ configuration
@@ -162,9 +163,12 @@ qt_add_translation(LRELEASE_VAR ${TRANSLATIONS})
 add_custom_target(lrelease ALL DEPENDS ${LRELEASE_VAR})
 
 # Doxygen
-find_package(Doxygen)
-doxygen_add_docs(doc ${CMAKE_SOURCE_DIR} ALL CONFIG_FILE "${CMAKE_SOURCE_DIR}/Doxyfile")
-doxygen_add_docs(dev_doc ${CMAKE_SOURCE_DIR} CONFIG_FILE "${CMAKE_SOURCE_DIR}/Doxyfile.internal")
+if(WITH_DOCS)
+    message("Build doxygen documentation")
+    find_package(Doxygen)
+    doxygen_add_docs(doc ${CMAKE_SOURCE_DIR} ALL CONFIG_FILE "${CMAKE_SOURCE_DIR}/Doxyfile")
+    doxygen_add_docs(dev_doc ${CMAKE_SOURCE_DIR} CONFIG_FILE "${CMAKE_SOURCE_DIR}/Doxyfile.internal")
+endif()
 
 # Install
 install(TARGETS shutdownmonitor)
